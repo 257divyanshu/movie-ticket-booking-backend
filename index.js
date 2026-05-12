@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const env = require('dotenv');
 const mongoose = require('mongoose');
-const Movie = require('./models/movie.model');
+
+const MovieRoutes = require('./routes/movie.routes');
 
 env.config();
 const app = express(); // express() returns an express application object
@@ -10,6 +11,8 @@ const app = express(); // express() returns an express application object
 // configuring body parser
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
+MovieRoutes(app); // invoking movie routes
 
 app.get('/home', (req, res) => {
     console.log("Hitting /home");
@@ -26,17 +29,6 @@ app.listen(process.env.PORT, async () => {
     try {
         await mongoose.connect(process.env.DB_URL); // connect to the mongodb server
         console.log("Successfully connected to mongodb");
-        await Movie.create({
-            name: "Bacchan Pandey",
-            description: "Comedy masala movie",
-            casts: ["Akshay Kumar", "Kriti Sanon", "Jaqueline Fernandiz"],
-            director: "Farhad Samji",
-            trailerUrl: "http://bacchanpandey/trailers/1",
-            language: "Hindi",
-            releaseDate: "18-03-2022",
-            releaseStatus: "RELEASED"
-        });
-
     } catch (err) {
         console.log("Not able to connect to mongodb", err);
     }
