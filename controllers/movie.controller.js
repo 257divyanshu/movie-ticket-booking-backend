@@ -14,7 +14,7 @@ const createMovie = async (req, res) => {
             message: 'Successfully created a new movie'
         })
     } catch (err) {
-        console.log("controller layer error:")
+        console.log("controller layer error (createMovie):")
         console.log(err);
         return res.status(500).json({
             success: false,
@@ -25,6 +25,35 @@ const createMovie = async (req, res) => {
     }
 };
 
+/**
+ * Controller function to delete a movie
+ * @returns result object (not the deleted object)
+ */
+const deleteMovie = async(req, res) => {
+    try{
+        const response = await Movie.deleteOne({
+            _id: req.params.movieId
+        });
+        return res.status(200).json({
+            success: true,
+            error: {},
+            data: response,
+            message: "Successfully delete the movie"
+        });
+    }
+    catch(err){
+        console.log("controller layer error (deleteMovie):");
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            error: err,
+            data: {},
+            message: "Something went wrong"
+        });
+    }
+}
+
 module.exports = {
-    createMovie
+    createMovie,
+    deleteMovie
 }
