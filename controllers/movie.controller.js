@@ -29,8 +29,8 @@ const createMovie = async (req, res) => {
  * Controller function to delete a movie
  * @returns result object (not the deleted object)
  */
-const deleteMovie = async(req, res) => {
-    try{
+const deleteMovie = async (req, res) => {
+    try {
         const response = await Movie.deleteOne({
             _id: req.params.movieId
         });
@@ -41,8 +41,39 @@ const deleteMovie = async(req, res) => {
             message: "Successfully delete the movie"
         });
     }
-    catch(err){
+    catch (err) {
         console.log("controller layer error (deleteMovie):");
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            error: err,
+            data: {},
+            message: "Something went wrong"
+        });
+    }
+}
+
+const getMovie = async (req, res) => {
+    try {
+        const response = await Movie.findById(req.params.movieId);
+        console.log(response);
+        if (!response) {
+            return res.status(404).json({
+                success: false,
+                error: "Movie not found",
+                data: null,
+                message: "No movie exists with the given movie ID"
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            error: {},
+            data: response,
+            message: "Successfully fetched the movie"
+        });
+    }
+    catch (err) {
+        console.log("controller layer error (getMovie):");
         console.log(err);
         return res.status(500).json({
             success: false,
@@ -55,5 +86,6 @@ const deleteMovie = async(req, res) => {
 
 module.exports = {
     createMovie,
-    deleteMovie
+    deleteMovie,
+    getMovie,
 }
