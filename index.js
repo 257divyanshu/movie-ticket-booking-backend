@@ -16,6 +16,9 @@ MovieRoutes(app); // invoking movie routes
 
 app.get('/home', (req, res) => {
     console.log("Hitting /home");
+    // console.log(req.body);
+    // console.log(req.query);
+    // console.log(req.params);
     return res.json({
         success: true,
         message: 'Fetched home'
@@ -28,7 +31,7 @@ app.listen(process.env.PORT, async () => {
 
     try {
         await mongoose.connect(process.env.DB_URL); // connect to the mongodb server
-        console.log("Successfully connected to mongodb");
+        console.log("Successfully connected to mongodb!");
     } catch (err) {
         console.log("Not able to connect to mongodb", err);
     }
