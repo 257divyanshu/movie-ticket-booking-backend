@@ -1,91 +1,63 @@
 const Movie = require('../models/movie.model');
-
+const movieService = require('../services/movie.service');
+const { successResponseBody, errorResponseBody } = require('../utils/responsebody');
 /**
  * Controller function to create a new movie
- * @returns newly created movie
+ * @returns movie created
  */
+
 const createMovie = async (req, res) => {
     try {
-        const movie = await Movie.create(req.body);
-        return res.status(201).json({
-            success: true,
-            error: {},
-            data: movie,
-            message: 'Successfully created a new movie'
-        })
+        console.log('createMovie controller function');
+        const movie = await movieService.createMovie(req.body);
+
+        successResponseBody.data = movie;
+        successResponseBody.message = "Successfully created the movie";
+        
+        return res.status(201).json(successResponseBody);
     } catch (err) {
-        console.log("controller layer error (createMovie):")
         console.log(err);
-        return res.status(500).json({
-            success: false,
-            error: err,
-            data: {},
-            message: 'Something went wrong'
-        });
+        return res.status(500).json(errorResponseBody);
     }
 };
 
-/**
- * Controller function to delete a movie
- * @returns result object (not the deleted object)
- */
 const deleteMovie = async (req, res) => {
     try {
-        const response = await Movie.deleteOne({
-            _id: req.params.movieId
-        });
-        return res.status(200).json({
-            success: true,
-            error: {},
-            data: response,
-            message: "Successfully delete the movie"
-        });
-    }
-    catch (err) {
-        console.log("controller layer error (deleteMovie):");
+        console.log('deleteMovie controller function');
+        console.log("req.params.id = ", req.params.movieId);
+        const response = await movieService.deleteMovie(req.params.movieId);
+
+        successResponseBody.data = response;
+        successResponseBody.message = "Successfully deleted the movie";
+
+        return res.status(200).json(successResponseBody);
+    } catch (err) {
         console.log(err);
-        return res.status(500).json({
-            success: false,
-            error: err,
-            data: {},
-            message: "Something went wrong"
-        });
+        return res.status(500).json(errorResponseBody);
     }
 }
 
 const getMovie = async (req, res) => {
     try {
-        const response = await Movie.findById(req.params.movieId);
-        console.log(response);
-        if (!response) {
-            return res.status(404).json({
-                success: false,
-                error: "Movie not found",
-                data: null,
-                message: "No movie exists with the given movie ID"
-            });
+        console.log('getMovie controller function');
+        console.log("req.params.id = ", req.params.movieId);
+        const response = await movieService.getMoviById(req.params.movieId);
+        if (response.err) {
+            errorResponseBody.err = response.err;
+            return res.status(response.code).json(errorResponseBody);
         }
-        return res.status(200).json({
-            success: true,
-            error: {},
-            data: response,
-            message: "Successfully fetched the movie"
-        });
-    }
-    catch (err) {
-        console.log("controller layer error (getMovie):");
+
+        successResponseBody.data = response;
+        return res.status(200).json(successResponseBody);
+
+    } catch (err) {
         console.log(err);
-        return res.status(500).json({
-            success: false,
-            error: err,
-            data: {},
-            message: "Something went wrong"
-        });
+        return res.status(500).json(errorResponseBody);
     }
 }
 
 module.exports = {
     createMovie,
     deleteMovie,
-    getMovie,
+    getMovie
 }
