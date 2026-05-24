@@ -40,6 +40,7 @@ const getMoviById = async (id) => {
 
 const updateMovie = async (id, data) => {
     try {
+        console.log('updateMovie service function');
         const movie = await Movie.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
         return movie;
     } catch (error) {
@@ -56,10 +57,27 @@ const updateMovie = async (id, data) => {
     }
 }
 
+const fetchMovies = async (filter) => {
+    console.log('fetchMovies service function');
+    let query = {};
+    if (filter.name) {
+        query.name = filter.name;
+    }
+    let movies = await Movie.find(query);
+    console.log(movies);
+    if (movies.length == 0) {
+        return {
+            err: 'Not able to find the queries movies',
+            code: 404
+        }
+    }
+    return movies;
+}
 
 module.exports = {
     createMovie,
     deleteMovie,
     getMoviById,
-    updateMovie
+    updateMovie,
+    fetchMovies
 }

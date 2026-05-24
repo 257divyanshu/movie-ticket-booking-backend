@@ -81,9 +81,28 @@ const updateMovie = async (req, res) => {
 }
 
 
+const getMovies = async (req, res) => {
+    try {
+        console.log('getMovies controller function');
+        const response = await movieService.fetchMovies(req.query);
+        if(response.err) {
+            errorResponseBody.err = response.err;
+            return res.status(response.code).json(errorResponseBody);
+        }
+        successResponseBody.data = response;
+        successResponseBody.message = "Successfully fetched the movie";
+        return res.status(200).json(successResponseBody);
+    } catch (error) {
+        console.log(error);
+        errorResponseBody.err = error;
+        return res.status(500).json(errorResponseBody);
+    }
+}
+
 module.exports = {
     createMovie,
     deleteMovie,
     getMovie,
-    updateMovie
+    updateMovie,
+    getMovies
 }

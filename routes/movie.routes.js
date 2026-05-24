@@ -24,6 +24,10 @@ const routes = (app) => {
         '/mba/api/v1/movies/:movieId',
         movieController.updateMovie
     );
+    app.get(
+        '/mba/api/v1/movies',
+        movieController.getMovies
+    );
 }
 
 module.exports = routes;
