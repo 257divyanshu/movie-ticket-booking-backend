@@ -1,11 +1,11 @@
 const Movie = require('../models/movie.model');
 const movieService = require('../services/movie.service');
 const { successResponseBody, errorResponseBody } = require('../utils/responsebody');
+
 /**
  * Controller function to create a new movie
  * @returns movie created
  */
-
 const createMovie = async (req, res) => {
     try {
         console.log('createMovie controller function');
@@ -78,6 +78,35 @@ const getMovie = async (req, res) => {
     }
 }
 
+const replaceMovie = async (req, res) => {
+    try {
+        console.log('replaceMovie controller function');
+        console.log("req.params.id = ", req.params.movieId);
+        const response = await movieService.replaceMovie(req.params.movieId, req.body);
+
+        if (response.err) {
+            const errorResponse = errorResponseBody();
+            if(response.code === 404){
+                errorResponse.err.message = response.err;
+            }
+            else if (response.code === 422){
+                errorResponse.err = response.err;
+                errorResponse.message = "The updates that you are trying to apply doesn't validate the schema";
+            }
+                return res.status(response.code).json(errorResponse);
+        }
+
+        const successResponse = successResponseBody();
+        successResponse.data = response;
+        return res.status(200).json(successResponse);
+    } catch (error) {
+        console.log(error);
+        const errorResponse = errorResponseBody();
+        errorResponse.err.message = error.message;
+        return res.status(500).json(errorResponse);
+    }
+}
+
 const updateMovie = async (req, res) => {
     try {
         console.log('updateMovie controller function');
@@ -134,6 +163,7 @@ module.exports = {
     createMovie,
     deleteMovie,
     getMovie,
+    replaceMovie,
     updateMovie,
     getMovies
 }

@@ -47,6 +47,33 @@ const getMoviById = async (id) => {
     return movie;
 }
 
+const replaceMovie = async (id, data) => {
+    try {
+        console.log('replaceMovie service function');
+        const movie = await Movie.findOneAndReplace({_id: id}, data, { returnDocument: 'after', runValidators: true });
+        console.log(movie);
+        if (!movie) {
+            return {
+                err: "No movie exists with the specified movieId",
+                code: 404
+            }
+        };
+        return movie;
+    } catch (error) {
+        console.log('service layer error')
+        if (error.name == 'ValidationError') {
+            let err = {};
+            Object.keys(error.errors).forEach((key) => {
+                err[key] = error.errors[key].message;
+            });
+            console.log(err);
+            return { err: err, code: 422 };
+        } else {
+            throw error;
+        }
+    }
+}
+
 const updateMovie = async (id, data) => {
     try {
         console.log('updateMovie service function');
@@ -95,6 +122,7 @@ module.exports = {
     createMovie,
     deleteMovie,
     getMoviById,
+    replaceMovie,
     updateMovie,
     fetchMovies
 }
