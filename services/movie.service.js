@@ -6,6 +6,7 @@ const createMovie = async (data) => {
         const movie = await Movie.create(data);
         return movie;
     } catch (error) {
+        console.log('service layer error');
         if (error.name == 'ValidationError') {
             let err = {};
             Object.keys(error.errors).forEach((key) => {
@@ -23,12 +24,20 @@ const createMovie = async (data) => {
 const deleteMovie = async (id) => {
     console.log('deleteMovie service function');
     const response = await Movie.findByIdAndDelete(id);
+    console.log(response);
+    if (!response) {
+        return {
+            err: "No movie exists with the specified movieId",
+            code: 404
+        }
+    };
     return response;
 }
 
 const getMoviById = async (id) => {
     console.log('getMoviById service function');
     const movie = await Movie.findById(id);
+    console.log(movie);
     if (!movie) {
         return {
             err: "No movie found for the corresponding id provided",
@@ -42,8 +51,16 @@ const updateMovie = async (id, data) => {
     try {
         console.log('updateMovie service function');
         const movie = await Movie.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
+        console.log(movie);
+        if (!movie) {
+            return {
+                err: "No movie exists with the specified movieId",
+                code: 404
+            }
+        };
         return movie;
     } catch (error) {
+        console.log('service layer error');
         if (error.name == 'ValidationError') {
             let err = {};
             Object.keys(error.errors).forEach((key) => {
