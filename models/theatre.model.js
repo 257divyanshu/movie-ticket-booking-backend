@@ -14,11 +14,11 @@ const theatreSchema = new mongoose.Schema({
         required: true
     },
     pincode: {
-        tpye: Number,
+        type: Number,
         required: true
     },
     address: String // no validations for address
-}, {timestamps: true});
+}, { timestamps: true });
 
 const Theatre = mongoose.model('Theatre', theatreSchema);
 
