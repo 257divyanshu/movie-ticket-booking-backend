@@ -26,7 +26,7 @@ const deleteTheatre = async (id) => {
         console.log('deleteTheatre service function');
         const response = await Theatre.findByIdAndDelete(id);
         console.log(response);
-        if(!response) {
+        if (!response) {
             return {
                 err: "No theatre exists with the specified theatreId",
                 code: 404
@@ -40,7 +40,28 @@ const deleteTheatre = async (id) => {
     }
 }
 
+const getTheatre = async (id) => {
+    try {
+        console.log('getTheatre service function');
+        const response = await Theatre.findById(id);
+        console.log(response);
+        if (!response) {
+            return {
+                err: "No theatre found for the given theatreId",
+                code: 404
+            }
+        }
+        return response;
+    } catch (error) {
+        console.log('service layer error');
+        console.log(error);
+        throw error;
+    }
+}
+
+
 module.exports = {
     createTheatre,
-    deleteTheatre
+    deleteTheatre,
+    getTheatre
 }

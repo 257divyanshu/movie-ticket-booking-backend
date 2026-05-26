@@ -9,8 +9,12 @@ const routes = (app) => {
         theatreController.createTheatre
     );
     app.delete(
-        '/mba/api/v1/theatres/:id',
+        '/mba/api/v1/theatres/:theatreId',
         theatreController.deleteTheatre
+    );
+    app.get(
+        '/mba/api/v1/theatres/:theatreId',
+        theatreController.getTheatre
     );
 }
 
