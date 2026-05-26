@@ -6,7 +6,8 @@ const mongoose = require('mongoose');
 const theatreSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        minLength: 5
     },
     description: String, // no validations for description
     city: { // using object because validations are required
