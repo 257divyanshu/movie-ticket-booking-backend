@@ -8,6 +8,10 @@ const routes = (app) => {
         theatreMiddlewares.validateTheatreCreateRequest,
         theatreController.createTheatre
     );
+    app.delete(
+        '/mba/api/v1/theatres/:id',
+        theatreController.deleteTheatre
+    );
 }
 
 module.exports = routes;
