@@ -59,9 +59,21 @@ const getTheatre = async (id) => {
     }
 }
 
+const getTheatres = async () => {
+    console.log('getTheatres service function');
+    try {
+        const response = await Theatre.find({});
+        return response;
+    } catch (error) {
+        console.log('service layer error');
+        console.log(error);
+        throw error;
+    } 
+}
 
 module.exports = {
     createTheatre,
     deleteTheatre,
-    getTheatre
+    getTheatre,
+    getTheatres
 }
