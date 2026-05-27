@@ -22,16 +22,23 @@ const createMovie = async (data) => {
 }
 
 const deleteMovie = async (id) => {
-    console.log('deleteMovie service function');
-    const response = await Movie.findByIdAndDelete(id);
-    console.log(response);
-    if (!response) {
-        return {
-            err: "No movie exists with the specified movieId",
-            code: 404
-        }
-    };
-    return response;
+    try{
+        console.log('deleteMovie service function');
+        const response = await Movie.findByIdAndDelete(id);
+        console.log(response);
+        if (!response) {
+            return {
+                err: "No movie exists with the specified movieId",
+                code: 404
+            }
+        };
+        return response;
+    }
+    catch(error){
+        console.log('service layer error');
+        console.log(error);
+        throw error;
+    }
 }
 
 const getMoviById = async (id) => {
