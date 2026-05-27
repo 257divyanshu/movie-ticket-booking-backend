@@ -59,16 +59,33 @@ const getTheatre = async (id) => {
     }
 }
 
-const getTheatres = async () => {
+const getTheatres = async (data) => {
     console.log('getTheatres service function');
     try {
-        const response = await Theatre.find({});
-        return response;
+        let query = {};
+        if (data && data.name) {
+            query.name = data.name;
+        };
+        if (data && data.city) {
+            query.city = data.city;
+        };
+        if (data && data.pincode) {
+            query.pincode = data.pincode;
+        };
+        const theatres = await Theatre.find(query);
+        console.log(theatres);
+        if (theatres.length == 0) {
+            return {
+                err: 'Not able to find the queries theatres',
+                code: 404
+            }
+        }
+        return theatres;
     } catch (error) {
         console.log('service layer error');
         console.log(error);
         throw error;
-    } 
+    }
 }
 
 module.exports = {

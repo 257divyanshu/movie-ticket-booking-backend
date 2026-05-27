@@ -30,7 +30,7 @@ const deleteTheatre = async (req, res) => {
         console.log('deleteTheatre controller function');
         console.log("req.params.id = ", req.params.movieId);
         const response = await theatreService.deleteTheatre(req.params.theatreId);
-        
+
         if (response.err) {
             const errorResponse = errorResponseBody();
             errorResponse.err.message = response.err;
@@ -54,7 +54,7 @@ const getTheatre = async (req, res) => {
         console.log('getTheatre controller function');
         console.log("req.params.id = ", req.params.movieId);
         const response = await theatreService.getTheatre(req.params.theatreId);
-        
+
         if (response.err) {
             const errorResponse = errorResponseBody();
             errorResponse.err.message = response.err;
@@ -76,7 +76,12 @@ const getTheatre = async (req, res) => {
 const getTheatres = async (req, res) => {
     try {
         console.log('getTheatres controller function');
-        const response = await theatreService.getTheatres();
+        const response = await theatreService.getTheatres(req.query);
+        if (response.err) {
+            const errorResponse = errorResponseBody();
+            errorResponse.err.message = response.err;
+            return res.status(response.code).json(errorResponse);
+        }
         const successResponse = successResponseBody();
         successResponse.data = response;
         successResponse.message = "Successfully fetched all the theatres";
