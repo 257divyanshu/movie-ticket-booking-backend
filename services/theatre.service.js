@@ -83,6 +83,7 @@ const getTheatres = async (data) => {
     console.log('getTheatres service function');
     try {
         let query = {};
+        let pagination = {};
         if (data && data.name) {
             query.name = data.name;
         };
@@ -92,7 +93,13 @@ const getTheatres = async (data) => {
         if (data && data.pincode) {
             query.pincode = data.pincode;
         };
-        const theatres = await Theatre.find(query);
+        if (data && data.limit) {
+            pagination.limit = data.limit;
+        };
+        if (data && data.skip) {
+            pagination.skip = data.skip;
+        };
+        const theatres = await Theatre.find(query, {}, pagination);
         console.log(theatres);
         if (theatres.length == 0) {
             return {
