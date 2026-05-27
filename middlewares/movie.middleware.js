@@ -1,5 +1,12 @@
 const { errorResponseBody } = require("../utils/responsebody");
 
+/**
+ * Validates the movie creation request payload for required fields. 
+ * @param {*} req Express request object
+ * @param {*} res Express response object
+ * @param {*} next Express next middlware function
+ * @returns {Object|void} Returns a 400 response for invalid requests, otherwise passes control to next middleware
+ */
 const validateMovieCreateRequest = async (req, res, next) => {
     // validate the movie name
     if (!req.body.name) {

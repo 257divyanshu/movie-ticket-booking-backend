@@ -1,5 +1,10 @@
 const Theatre = require('../models/theatre.model');
 
+/**
+ * Creates a new theatre document in the database.
+ * @param {*} data Theatre data payload
+ * @returns {Object} Created theatre document or validation error object
+ */
 const createTheatre = async (data) => {
     console.log('createTheatre service function');
     try {
@@ -21,6 +26,11 @@ const createTheatre = async (data) => {
     }
 }
 
+/**
+ * Deletes a theatre document by its id.
+ * @param {*} id Theatre id
+ * @returns {Object} Deleted theatre document or error object if theatre is not found
+ */
 const deleteTheatre = async (id) => {
     try {
         console.log('deleteTheatre service function');
@@ -40,6 +50,11 @@ const deleteTheatre = async (id) => {
     }
 }
 
+/**
+ * Fetches a theatre document by its id.
+ * @param {*} id Theatre id
+ * @returns {Object} Theatre document or error object if theatre is not found
+ */
 const getTheatre = async (id) => {
     try {
         console.log('getTheatre service function');
@@ -59,6 +74,11 @@ const getTheatre = async (id) => {
     }
 }
 
+/**
+ * Fetches theatre documents based on the provided filter criteria.
+ * @param {*} filter Query filter object
+ * @returns {Object} Matching theatre documents or error object if no theatres are found
+ */
 const getTheatres = async (data) => {
     console.log('getTheatres service function');
     try {

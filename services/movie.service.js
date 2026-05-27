@@ -1,5 +1,10 @@
 const Movie = require('../models/movie.model');
 
+/**
+ * Creates a new movie document in the database.
+ * @param {*} data Movie data payload
+ * @returns {Object} Created movie document or validation error object
+ */
 const createMovie = async (data) => {
     console.log('createMovie service function');
     try {
@@ -21,6 +26,11 @@ const createMovie = async (data) => {
     }
 }
 
+/**
+ * Deletes a movie document by its id.
+ * @param {*} id Movie id
+ * @returns {Object} Deleted movie document or error object if movie is not found
+ */
 const deleteMovie = async (id) => {
     try{
         console.log('deleteMovie service function');
@@ -41,6 +51,11 @@ const deleteMovie = async (id) => {
     }
 }
 
+/**
+ * Fetches a movie document by its id.
+ * @param {*} id Movie id
+ * @returns {Object} Movie document or error object if movie is not found
+ */
 const getMoviById = async (id) => {
     console.log('getMoviById service function');
     const movie = await Movie.findById(id);
@@ -54,6 +69,12 @@ const getMoviById = async (id) => {
     return movie;
 }
 
+/**
+ * Replaces an existing movie document completely by its id.
+ * @param {*} id Movie id
+ * @param {*} data Complete movie data payload
+ * @returns {Object} Updated movie document or error object
+ */
 const replaceMovie = async (id, data) => {
     try {
         console.log('replaceMovie service function');
@@ -81,6 +102,12 @@ const replaceMovie = async (id, data) => {
     }
 }
 
+/**
+ * Partially updates an existing movie document by its id.
+ * @param {*} id Movie id
+ * @param {*} data Partial movie data payload
+ * @returns {Object} Updated movie document or error object
+ */
 const updateMovie = async (id, data) => {
     try {
         console.log('updateMovie service function');
@@ -108,6 +135,11 @@ const updateMovie = async (id, data) => {
     }
 }
 
+/**
+ * Fetches movie documents based on the provided filter criteria.
+ * @param {*} filter Query filter object
+ * @returns {Object} Matching movie documents or error object if no movies are found
+ */
 const fetchMovies = async (filter) => {
     console.log('fetchMovies service function');
     let query = {};
