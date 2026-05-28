@@ -18,7 +18,11 @@ const theatreSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    address: String // no validations for address
+    address: String, // no validations for address
+    movies: {
+        type: [mongoose.Schema.Types.ObjectId], // type is 'array of object ids'
+        ref: 'Movie' // referencing the 'Movie' collection
+    }
 }, { timestamps: true });
 
 const Theatre = mongoose.model('Theatre', theatreSchema);
