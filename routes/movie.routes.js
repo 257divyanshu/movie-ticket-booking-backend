@@ -26,7 +26,7 @@ const routes = (app) => {
     // UPDATE
     app.put(
         '/mba/api/v1/movies/:movieId',
-        movieController.updateMovie
+        movieController.replaceMovie
     );
 
     // UPDATE
