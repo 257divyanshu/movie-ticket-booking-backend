@@ -115,9 +115,77 @@ const getTheatres = async (data) => {
     }
 }
 
+/**
+ * Replaces an existing theatre document completely by its id.
+ * @param {*} id Theatre id
+ * @param {*} data Complete theatre data payload
+ * @returns {Object} Updated theatre document or error object
+ */
+const replaceTheatre = async (id, data) => {
+    try {
+        console.log('replaceTheatre service function');
+        const theatre = await Theatre.findOneAndReplace({_id: id}, data, { returnDocument: 'after', runValidators: true });
+        console.log(theatre);
+        if (!theatre) {
+            return {
+                err: "No theatre exists with the specified theatreId",
+                code: 404
+            }
+        };
+        return theatre;
+    } catch (error) {
+        console.log('service layer error')
+        if (error.name == 'ValidationError') {
+            let err = {};
+            Object.keys(error.errors).forEach((key) => {
+                err[key] = error.errors[key].message;
+            });
+            console.log(err);
+            return { err: err, code: 422 };
+        } else {
+            throw error;
+        }
+    }
+}
+
+/**
+ * Partially updates an existing theatre document by its id.
+ * @param {*} id Theatre id
+ * @param {*} data Partial theatre data payload
+ * @returns {Object} Updated theatre document or error object
+ */
+const updateTheatre = async (id, data) => {
+    try {
+        console.log('updateTheatre service function');
+        const theatre = await Theatre.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
+        console.log(theatre);
+        if (!theatre) {
+            return {
+                err: "No theatre exists with the specified theatreId",
+                code: 404
+            }
+        };
+        return theatre;
+    } catch (error) {
+        console.log('service layer error');
+        if (error.name == 'ValidationError') {
+            let err = {};
+            Object.keys(error.errors).forEach((key) => {
+                err[key] = error.errors[key].message;
+            });
+            console.log(err);
+            return { err: err, code: 422 };
+        } else {
+            throw error;
+        }
+    }
+}
+
 module.exports = {
     createTheatre,
     deleteTheatre,
     getTheatre,
-    getTheatres
+    getTheatres,
+    replaceTheatre,
+    updateTheatre
 }
