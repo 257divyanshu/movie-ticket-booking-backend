@@ -124,7 +124,7 @@ const getTheatres = async (data) => {
 const replaceTheatre = async (id, data) => {
     try {
         console.log('replaceTheatre service function');
-        const theatre = await Theatre.findOneAndReplace({_id: id}, data, { returnDocument: 'after', runValidators: true });
+        const theatre = await Theatre.findOneAndReplace({ _id: id }, data, { returnDocument: 'after', runValidators: true });
         console.log(theatre);
         if (!theatre) {
             return {
@@ -181,11 +181,46 @@ const updateTheatre = async (id, data) => {
     }
 }
 
+/**
+ * 
+ * @param theatreId -> unique id of the theatre for which we want to update movies
+ * @param movieIds -> array of movie ids that are expected to be updated in theatre
+ * @param insert -> boolean that tells whether we want insert movies or remove them
+ * @returns -> updated theatre object
+ */
+const updateMoviesInTheatres = async (theatreId, movieIds, insert) => {
+    const theatre = await Theatre.findById(theatreId);
+    if (!theatre) {
+        return {
+            err: "No theatre exists with the specified theatreId",
+            code: 404
+        };
+    }
+    if (insert) {
+        // we need to add movies
+        // console.log("inserting");
+        movieIds.forEach(movieId => {
+            theatre.movies.push(movieId);
+        });
+    } else {
+        // we need to remove movies
+        // console.log("removing");
+        // console.log(theatre.movies);
+        theatre.movies = theatre.movies.filter(
+            (movieId) => (!(movieIds.includes(movieId.toString())))
+        );
+        // console.log(theatre.movies);
+    }
+    await theatre.save();
+    return theatre.populate('movies');
+}
+
 module.exports = {
     createTheatre,
     deleteTheatre,
     getTheatre,
     getTheatres,
     replaceTheatre,
-    updateTheatre
+    updateTheatre,
+    updateMoviesInTheatres
 }

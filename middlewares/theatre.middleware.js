@@ -32,6 +32,40 @@ const validateTheatreCreateRequest = async (req, res, next) => {
     next(); // everything is fine move to the next middleware
 }
 
+const validateUpdateMoviesRequest = async (req, res, next) => {
+    // validate the presence of insert parameter
+    if(req.body.insert == undefined) {
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err.message = "The insert parameter is missing in the request";
+        return res.status(400).json(badRequestResponse);
+    }
+    // validate the presence of movieIds
+    if(!req.body.movieIds) {
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err.message = "No movies present in the request to be updated in theatre";
+        return res.status(400).json(badRequestResponse);
+    }
+    // validate the type of movieIds
+    if(!(req.body.movieIds instanceof Array)) {
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err.message = "Expected array of movies but found something else";
+        return res.status(400).json(badRequestResponse);
+    }
+    // validate the length of movieIds array
+    if(req.body.movieIds.length == 0) {
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err.message = "No movies present in the array provided";
+        return res.status(400).json(badRequestResponse);
+    }
+    // everything is fine
+    next();
+}
+
 module.exports = {
-    validateTheatreCreateRequest
+    validateTheatreCreateRequest,
+    validateUpdateMoviesRequest
 }

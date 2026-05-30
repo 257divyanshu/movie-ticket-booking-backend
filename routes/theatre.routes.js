@@ -1,6 +1,5 @@
 const theatreController = require('../controllers/theatre.controller');
-const theatreMiddlewares = require('../middlewares/theatre.middleware');
-
+const theatreMiddlewares = require('../middlewares/theatre.middleware')
 
 const routes = (app) => {
 
@@ -39,6 +38,13 @@ const routes = (app) => {
     app.patch(
         '/mba/api/v1/theatres/:theatreId',
         theatreController.updateTheatre
+    );
+
+    // UPDATE
+    app.patch(
+        '/mba/api/v1/theatres/:theatreId/movies',
+        theatreMiddlewares.validateUpdateMoviesRequest,
+        theatreController.updateMovies
     );
 }
 
