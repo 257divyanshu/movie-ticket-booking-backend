@@ -188,30 +188,34 @@ const updateTheatre = async (id, data) => {
  * @returns -> updated theatre object
  */
 const updateMoviesInTheatres = async (theatreId, movieIds, insert) => {
-    const theatre = await Theatre.findById(theatreId);
-    if (!theatre) {
-        return {
-            err: "No theatre exists with the specified theatreId",
-            code: 404
-        };
+    try {
+        let result = {};
+        if (insert) {
+            // we need to add movies
+            result = await Theatre.updateOne(
+                { _id: theatreId },
+                { $addToSet: { movies: { $each: movieIds } } }
+            );
+        } else {
+            // we need to remove movies
+            result = await Theatre.updateOne(
+                { _id: theatreId },
+                { $pull: { movies: { $in: movieIds } } }
+            );
+        }
+        if (result.matchedCount == 0) {
+            return {
+                err: "No theatre found for the given theatreId",
+                code: 404
+            }
+        }
+        const theatre = await Theatre.findById(theatreId);
+        return theatre.populate('movies');
+    } catch (error) {
+        console.log("service layer error");
+        console.log(error);
+        throw error;
     }
-    if (insert) {
-        // we need to add movies
-        // console.log("inserting");
-        movieIds.forEach(movieId => {
-            theatre.movies.push(movieId);
-        });
-    } else {
-        // we need to remove movies
-        // console.log("removing");
-        // console.log(theatre.movies);
-        theatre.movies = theatre.movies.filter(
-            (movieId) => (!(movieIds.includes(movieId.toString())))
-        );
-        // console.log(theatre.movies);
-    }
-    await theatre.save();
-    return theatre.populate('movies');
 }
 
 module.exports = {
