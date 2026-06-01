@@ -93,14 +93,13 @@ const getTheatres = async (data) => {
         if (data && data.pincode) {
             query.pincode = data.pincode;
         };
-        if (data && data.limit) {
-            pagination.limit = data.limit;
-        };
-        if (data && data.skip) {
-            pagination.skip = data.skip;
-        };
+        const perPage = data?.perPage ? Number(data.perPage) : 5;
+        const page = data?.page ? Number(data.page) : 1;
+
+        pagination.limit = perPage;
+        pagination.skip = (page - 1) * perPage;
         const theatres = await Theatre.find(query, {}, pagination);
-        console.log(theatres);
+        // console.log(theatres);
         if (theatres.length == 0) {
             return {
                 err: 'Not able to find the queries theatres',
