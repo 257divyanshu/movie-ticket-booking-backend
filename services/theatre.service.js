@@ -189,30 +189,22 @@ const updateTheatre = async (id, data) => {
  */
 const updateMoviesInTheatres = async (theatreId, movieIds, insert) => {
     try {
-        let result = {};
-        if (insert) {
-            // we need to add movies
-            result = await Theatre.updateOne(
-                { _id: theatreId },
-                { $addToSet: { movies: { $each: movieIds } } }
-            );
-        } else {
-            // we need to remove movies
-            result = await Theatre.updateOne(
-                { _id: theatreId },
-                { $pull: { movies: { $in: movieIds } } }
-            );
-        }
-        if (result.matchedCount == 0) {
+        const theatre = await Theatre.findByIdAndUpdate(
+            theatreId,
+            insert
+                ? { $addToSet: { movies: { $each: movieIds } } }
+                : { $pull: { movies: { $in: movieIds } } },
+            { returnDocument: 'after' }
+        );
+        if (!theatre) {
             return {
                 err: "No theatre found for the given theatreId",
                 code: 404
-            }
+            };
         }
-        const theatre = await Theatre.findById(theatreId);
         return theatre.populate('movies');
     } catch (error) {
-        console.log("service layer error");
+        console.log('service layer error');
         console.log(error);
         throw error;
     }
