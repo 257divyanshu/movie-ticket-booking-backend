@@ -93,6 +93,9 @@ const getTheatres = async (data) => {
         if (data && data.pincode) {
             query.pincode = data.pincode;
         };
+        if (data && data.movieId) {
+            query.movies = {$all: data.movieId};
+        };
         const perPage = data?.perPage ? Number(data.perPage) : 5;
         const page = data?.page ? Number(data.page) : 1;
 
