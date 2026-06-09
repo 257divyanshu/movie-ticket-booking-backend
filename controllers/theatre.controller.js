@@ -102,14 +102,14 @@ const replaceTheatre = async (req, res) => {
 
         if (response.err) {
             const errorResponse = errorResponseBody();
-            if(response.code === 404){
+            if (response.code === 404) {
                 errorResponse.err.message = response.err;
             }
-            else if (response.code === 422){
+            else if (response.code === 422) {
                 errorResponse.err = response.err;
                 errorResponse.message = "The updates that you are trying to apply doesn't validate the schema";
             }
-                return res.status(response.code).json(errorResponse);
+            return res.status(response.code).json(errorResponse);
         }
 
         const successResponse = successResponseBody();
@@ -131,14 +131,14 @@ const updateTheatre = async (req, res) => {
 
         if (response.err) {
             const errorResponse = errorResponseBody();
-            if(response.code === 404){
+            if (response.code === 404) {
                 errorResponse.err.message = response.err;
             }
-            else if (response.code === 422){
+            else if (response.code === 422) {
                 errorResponse.err = response.err;
                 errorResponse.message = "The updates that you are trying to apply doesn't validate the schema";
             }
-                return res.status(response.code).json(errorResponse);
+            return res.status(response.code).json(errorResponse);
         }
 
         const successResponse = successResponseBody();
@@ -154,12 +154,13 @@ const updateTheatre = async (req, res) => {
 
 const updateMovies = async (req, res) => {
     try {
+        console.log('updateMovies controller function');
         const response = await theatreService.updateMoviesInTheatres(
             req.params.theatreId,
             req.body.movieIds,
             req.body.insert
         );
-        if(response.err) {
+        if (response.err) {
             const errorResponse = errorResponseBody();
             errorResponse.err.message = response.err;
             return res.status(response.code).json(errorResponse);
@@ -176,6 +177,27 @@ const updateMovies = async (req, res) => {
     }
 }
 
+const getMovies = async (req, res) => {
+    try {
+        console.log('getMovies controller function');
+        const response = await theatreService.getMoviesInATheatre(req.params.theatreId);
+        if (response.err) {
+            const errorResponse = errorResponseBody();
+            errorResponse.err = response.err;
+            return res.status(response.code).json(errorResponse);
+        }
+        const successResponse = successResponseBody();
+        successResponse.data = response;
+        successResponse.message = "Successfully fetched the movies for the theatre";
+        return res.status(200).json(successResponse);
+    } catch (error) {
+        console.log(error);
+        const errorResponse = errorResponseBody();
+        errorResponse.err = error;
+        return res.status(500).json(errorResponse);
+    }
+}
+
 module.exports = {
     createTheatre,
     deleteTheatre,
@@ -183,5 +205,6 @@ module.exports = {
     getTheatres,
     replaceTheatre,
     updateTheatre,
-    updateMovies
+    updateMovies,
+    getMovies
 }
