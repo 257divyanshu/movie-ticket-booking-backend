@@ -52,6 +52,12 @@ const routes = (app) => {
         '/mba/api/v1/theatres/:theatreId/movies',
         theatreController.getMovies
     );
+
+    // READ
+    app.get(
+        '/mba/api/v1/theatres/:theatreId/movies/:movieId',
+        theatreController.checkMovie
+    );
 }
 
 module.exports = routes;
