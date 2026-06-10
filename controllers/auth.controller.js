@@ -4,6 +4,12 @@ const { successResponseBody, errorResponseBody } = require('../utils/responsebod
 const signup = async (req, res) => {
     try {
         const response = await userService.createUser(req.body);
+        if (response.err) {
+            const errorResponse = errorResponseBody();
+            errorResponse.err = response.err;
+            errorResponse.message = "Validation failed on few parameters of the request body"
+            return res.status(response.code).json(errorResponse);
+        }
         const successResponse = successResponseBody();
         successResponse.data = response;
         successResponse.message = "Successfully registered a user";

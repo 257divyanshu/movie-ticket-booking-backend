@@ -17,7 +17,6 @@ const createMovie = async (data) => {
             Object.keys(error.errors).forEach((key) => {
                 err[key] = error.errors[key].message;
             });
-            console.log("servie layer error: ")
             console.log(err);
             return { err: err, code: 422 };
         } else {
