@@ -8,6 +8,7 @@ const validateSignupRequest = async (req, res, next) => {
         badRequestResponse.err = "Name of the user is not present in the request";
         return res.status(400).json(badRequestResponse);
     }
+
     // validate the presence of email
     if(!req.body.email) {
         const badRequestResponse = errorResponseBody();
@@ -15,6 +16,7 @@ const validateSignupRequest = async (req, res, next) => {
         badRequestResponse.err = "Email of the user is not present in the request";
         return res.status(400).json(badRequestResponse);
     }
+    
     // validate the presence of password
     if(!req.body.password) {
         const badRequestResponse = errorResponseBody();

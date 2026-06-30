@@ -15,6 +15,7 @@ const validateTheatreCreateRequest = async (req, res, next) => {
         badRequestResponse.err.message = "The name of the theatre is not present in the request";
         return res.status(400).json(badRequestResponse)
     }
+
     // validate presence of pincode
     if(!req.body.pincode) {
         const badRequestResponse = errorResponseBody();
@@ -22,6 +23,7 @@ const validateTheatreCreateRequest = async (req, res, next) => {
         badRequestResponse.err.message = "The pincode of the theatre is not present in the request";
         return res.status(400).json(badRequestResponse);
     }
+
     // validate the presence of city
     if(!req.body.city) {
         const badRequestResponse = errorResponseBody();
@@ -29,6 +31,7 @@ const validateTheatreCreateRequest = async (req, res, next) => {
         badRequestResponse.err.message = "The city of the theatre is not present";
         return res.status(400).json(badRequestResponse);
     }
+
     next(); // everything is fine move to the next middleware
 }
 
@@ -40,6 +43,7 @@ const validateUpdateMoviesRequest = async (req, res, next) => {
         badRequestResponse.err.message = "The insert parameter is missing in the request";
         return res.status(400).json(badRequestResponse);
     }
+
     // validate the presence of movieIds
     if(!req.body.movieIds) {
         const badRequestResponse = errorResponseBody();
@@ -47,6 +51,7 @@ const validateUpdateMoviesRequest = async (req, res, next) => {
         badRequestResponse.err.message = "No movies present in the request to be updated in theatre";
         return res.status(400).json(badRequestResponse);
     }
+
     // validate the type of movieIds
     if(!(req.body.movieIds instanceof Array)) {
         const badRequestResponse = errorResponseBody();
@@ -54,6 +59,7 @@ const validateUpdateMoviesRequest = async (req, res, next) => {
         badRequestResponse.err.message = "Expected array of movies but found something else";
         return res.status(400).json(badRequestResponse);
     }
+
     // validate the length of movieIds array
     if(req.body.movieIds.length == 0) {
         const badRequestResponse = errorResponseBody();
@@ -61,6 +67,7 @@ const validateUpdateMoviesRequest = async (req, res, next) => {
         badRequestResponse.err.message = "No movies present in the array provided";
         return res.status(400).json(badRequestResponse);
     }
+    
     // everything is fine
     next();
 }

@@ -7,19 +7,23 @@ const Theatre = require('../models/theatre.model');
  */
 const createTheatre = async (data) => {
     console.log('createTheatre service function');
+
     try {
         const response = await Theatre.create(data);
         return response;
     } catch (error) {
         console.log('service layer error');
+
         if (error.name == 'ValidationError') {
             let err = {};
             Object.keys(error.errors).forEach((key) => {
                 err[key] = error.errors[key].message;
             });
+
             console.log("servie layer error: ")
             console.log(err);
-            return { err: err, code: 422 };
+            
+            throw { err: err, code: 422 };
         } else {
             throw error;
         }
@@ -34,6 +38,7 @@ const createTheatre = async (data) => {
 const deleteTheatre = async (id) => {
     try {
         console.log('deleteTheatre service function');
+
         const response = await Theatre.findByIdAndDelete(id);
         console.log(response);
         if (!response) {
@@ -42,10 +47,12 @@ const deleteTheatre = async (id) => {
                 code: 404
             }
         }
+
         return response;
     } catch (error) {
         console.log('service layer error');
         console.log(error);
+
         throw error;
     }
 }
@@ -58,18 +65,22 @@ const deleteTheatre = async (id) => {
 const getTheatre = async (id) => {
     try {
         console.log('getTheatre service function');
+
         const response = await Theatre.findById(id);
         console.log(response);
+
         if (!response) {
             return {
                 err: "No theatre found for the given theatreId",
                 code: 404
             }
         }
+
         return response;
     } catch (error) {
         console.log('service layer error');
         console.log(error);
+
         throw error;
     }
 }
@@ -96,23 +107,28 @@ const getTheatres = async (data) => {
         if (data && data.movieId) {
             query.movies = { $all: data.movieId };
         };
+
         const perPage = data?.perPage ? Number(data.perPage) : 5;
         const page = data?.page ? Number(data.page) : 1;
-
         pagination.limit = perPage;
         pagination.skip = (page - 1) * perPage;
+
         const theatres = await Theatre.find(query, {}, pagination);
+
         // console.log(theatres);
+
         if (theatres.length == 0) {
             return {
                 err: 'Not able to find the queries theatres',
                 code: 404
             }
         }
+
         return theatres;
     } catch (error) {
         console.log('service layer error');
         console.log(error);
+
         throw error;
     }
 }
@@ -126,24 +142,31 @@ const getTheatres = async (data) => {
 const replaceTheatre = async (id, data) => {
     try {
         console.log('replaceTheatre service function');
+
         const theatre = await Theatre.findOneAndReplace({ _id: id }, data, { returnDocument: 'after', runValidators: true });
+
         console.log(theatre);
+
         if (!theatre) {
             return {
                 err: "No theatre exists with the specified theatreId",
                 code: 404
             }
         };
+
         return theatre;
     } catch (error) {
         console.log('service layer error')
+
         if (error.name == 'ValidationError') {
             let err = {};
             Object.keys(error.errors).forEach((key) => {
                 err[key] = error.errors[key].message;
             });
+
             console.log(err);
-            return { err: err, code: 422 };
+
+            throw { err: err, code: 422 };
         } else {
             throw error;
         }
@@ -159,24 +182,31 @@ const replaceTheatre = async (id, data) => {
 const updateTheatre = async (id, data) => {
     try {
         console.log('updateTheatre service function');
+
         const theatre = await Theatre.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
+
         console.log(theatre);
+
         if (!theatre) {
             return {
                 err: "No theatre exists with the specified theatreId",
                 code: 404
             }
         };
+
         return theatre;
     } catch (error) {
         console.log('service layer error');
+
         if (error.name == 'ValidationError') {
             let err = {};
             Object.keys(error.errors).forEach((key) => {
                 err[key] = error.errors[key].message;
             });
+
             console.log(err);
-            return { err: err, code: 422 };
+
+            throw { err: err, code: 422 };
         } else {
             throw error;
         }
@@ -193,6 +223,7 @@ const updateTheatre = async (id, data) => {
 const updateMoviesInTheatres = async (theatreId, movieIds, insert) => {
     try {
         console.log('updateMoviesInTheatres service function');
+
         const theatre = await Theatre.findByIdAndUpdate(
             theatreId,
             insert
@@ -200,16 +231,19 @@ const updateMoviesInTheatres = async (theatreId, movieIds, insert) => {
                 : { $pull: { movies: { $in: movieIds } } },
             { returnDocument: 'after' }
         );
+
         if (!theatre) {
             return {
                 err: "No theatre found for the given theatreId",
                 code: 404
             };
         }
+
         return theatre.populate('movies');
     } catch (error) {
         console.log('service layer error');
         console.log(error);
+
         throw error;
     }
 }
@@ -217,17 +251,21 @@ const updateMoviesInTheatres = async (theatreId, movieIds, insert) => {
 const getMoviesInATheatre = async (id) => {
     try {
         console.log('getMoviesInATheatre service layer function');
+
         const theatre = await Theatre.findById(id, { name: 1, movies: 1, address: 1 }).populate('movies');
+
         if (!theatre) {
             return {
                 err: 'No theatre with the given id found',
                 code: 404
             }
         }
+
         return theatre;
     } catch (error) {
         console.log('service layer error');
         console.log(error);
+
         throw error;
     }
 }
@@ -235,18 +273,22 @@ const getMoviesInATheatre = async (id) => {
 const checkMovieInATheatre = async (theatreId, movieId) => {
     try {
         console.log('checkMovieInATheatre service layer function');
+
         let response = await Theatre.findById(theatreId);
         console.log(response);
+
         if(!response) {
             return {
                 err: "No such theatre found for the given id",
                 code: 404
             }
         }
+
         return response.movies.indexOf(movieId) != -1;
     } catch (error) {
         console.log('service layer error');
         console.log(error);
+        
         throw error;
     }
 }

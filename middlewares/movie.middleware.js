@@ -58,6 +58,7 @@ const validateMovieCreateRequest = async (req, res, next) => {
         badRequestResponse.err.message = "The director of the movie is not present in the request";
         return res.status(400).json(badRequestResponse);
     }
+    
     next();
 }
 
