@@ -60,7 +60,27 @@ const getUserByEmail = async (email) => {
     }
 }
 
+const getUserById = async (id) => {
+    try {
+        console.log('getUserById service layer function');
+
+        const user = await User.findById(id);
+
+        if (!user) {
+            throw { err: "No user found for the given id", code: 404 };
+        }
+
+        return user;
+    } catch (error) {
+        console.log("service layer error");
+        console.log(error);
+
+        throw error;
+    }
+}
+
 module.exports = {
     createUser,
-    getUserByEmail
+    getUserByEmail,
+    getUserById
 }
