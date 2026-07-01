@@ -69,7 +69,7 @@ const signin = async (req, res) => {
             errorResponse.err.message = error.err;
             return res.status(error.code).json(errorResponse);
         }
-        
+
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
@@ -77,7 +77,43 @@ const signin = async (req, res) => {
     }
 }
 
+const resetPassword = async (req, res) => {
+    try {
+        console.log('resetPassword controller function');
+
+        const user = await userService.getUserById(req.userId);
+
+        const isOldPasswordCorrect = await user.isValidPassword(req.body.oldPassword);
+
+        if (!isOldPasswordCorrect) {
+            throw { err: 'Invalid old password, please write the correct old password', code: 403 };
+        }
+
+        user.password = req.body.newPassword;
+        await user.save();
+
+        const successResponse = successResponseBody();
+        successResponse.data = user;
+        successResponse.message = 'Successfully updated the password for the given user';
+        return res.status(200).json(successResponse);
+    } catch (error) {
+        console.log("controller layer error");
+        // console.log(error);
+
+        if (error.err) {
+            const errorResponse = errorResponseBody();
+            errorResponse.err.message = error.err;
+            return res.status(error.code).json(errorResponse);
+        }
+
+        const errorResponse = errorResponseBody();
+        errorResponse.err.message = error.message;
+        return res.status(500).json(errorResponse);
+    }
+}
+
 module.exports = {
     signup,
-    signin
+    signin,
+    resetPassword
 }
