@@ -1,8 +1,9 @@
 const User = require('../models/user.model');
-const { USER_ROLE, USER_STATUS} = require('../utils/constants');
+const { USER_ROLE, USER_STATUS } = require('../utils/constants');
 
 const createUser = async (data) => {
     try {
+        console.log('createUser service layer function');
         if (!data.userRole || data.userRole == USER_ROLE.customer) {
             if (data.userStatus && data.userStatus != USER_STATUS.approved) {
                 throw {
@@ -38,6 +39,28 @@ const createUser = async (data) => {
     }
 }
 
+const getUserByEmail = async (email) => {
+    try {
+        console.log('getUserByEmail service layer function');
+
+        const response = await User.findOne({
+            email: email
+        });
+
+        if (!response) {
+            throw { err: "No user found for the given email", code: 404 };
+        }
+
+        return response;
+    } catch (error) {
+        console.log("service layer error");
+        console.log(error);
+
+        throw error;
+    }
+}
+
 module.exports = {
-    createUser
+    createUser,
+    getUserByEmail
 }
