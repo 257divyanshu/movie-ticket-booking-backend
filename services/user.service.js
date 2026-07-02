@@ -27,7 +27,7 @@ const createUser = async (data) => {
                 err[key] = error.errors[key].message;
             });
 
-            console.log(err);
+            // console.log(err);
 
             // old way (the way we have been doing)
             // return { err: err, code: 422 };
@@ -79,8 +79,52 @@ const getUserById = async (id) => {
     }
 }
 
+const updateUserRoleOrStatus = async (data, userId) => {
+    try {
+        console.log('updateUserRoleOrStatus service layer function');
+
+        let updateQuery = {};
+
+        if (data.userRole) updateQuery.userRole = data.userRole;
+        if (data.userStatus) updateQuery.userStatus = data.userStatus;
+
+        let response = await User.findByIdAndUpdate(
+            userId,
+            updateQuery,
+            {
+                returnDocument: 'after',
+                runValidators: true
+            }
+        );
+
+        // console.log(response);
+
+        if (!response) {
+            throw { err: 'No user found for the given id', code: 404 };
+        }
+
+        return response;
+    } catch (error) {
+        console.log("service layer error");
+        console.log(error);
+
+        if (error.name == 'ValidationError') {
+            let err = {};
+            Object.keys(error.errors).forEach(key => {
+                err[key] = error.errors[key].message;
+            });
+
+            throw { err: err, code: 422 };
+        }
+        else {
+            throw error;
+        }
+    }
+}
+
 module.exports = {
     createUser,
     getUserByEmail,
-    getUserById
+    getUserById,
+    updateUserRoleOrStatus
 }
