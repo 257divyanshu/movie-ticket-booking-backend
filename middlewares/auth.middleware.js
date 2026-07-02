@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { errorResponseBody } = require('../utils/responsebody');
 const userService = require('../services/user.service');
+const { USER_ROLE} = require('../utils/constants');
 
 const validateSignupRequest = async (req, res, next) => {
     // validate the presence of name
@@ -60,6 +61,8 @@ const validateSigninRequest = async (req, res, next) => {
 
 const isAuthenticated = async (req, res, next) => {
     try {
+        console.log("isAuthenticated middleware");
+
         const token = req.headers["x-access-token"];
         if (!token) {
             const badRequestResponse = errorResponseBody();
@@ -80,7 +83,7 @@ const isAuthenticated = async (req, res, next) => {
 
         // check if the user is still valid or not (there might be a case where the token is verified but the user corresponding to it no longer exists)
         const user = await userService.getUserById(response.id);
-        req.userId = user.id;
+        req.userId = user._id;
         next();
     } catch (error) {
         if (error.name == "JsonWebTokenError") {
@@ -125,9 +128,47 @@ const validateResetPasswordRequest = (req, res, next) => {
     next();
 }
 
+const isAdmin = async (req, res, next) => {
+    console.log("isAdmin middleware")
+
+    const user = await userService.getUserById(req.userId);
+    if (user.userRole != USER_ROLE.admin) {
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err.message = "User is not an admin, cannot proceed with the request";
+        return res.status(401).json(badRequestResponse);
+    }
+    next();
+}
+
+const isClient = async (req, res, next) => {
+    const user = await userService.getUserById(req.user);
+    if (user.userRole != USER_ROLE.client) {
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err.message = "User is not a client, cannot proceed with the request";
+        return res.status(401).json(badRequestResponse);
+    }
+    next();
+}
+
+const isAdminOrClient = async (req, res, next) => {
+    const user = await userService.getUserById(req.user);
+    if (user.userRole != USER_ROLE.admin && user.userRole != USER_ROLE.client) {
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err.message = "User is neither a client not an admin, cannot proceed with the request";
+        return res.status(401).json(badRequestResponse);
+    }
+    next();
+}
+
 module.exports = {
     validateSignupRequest,
     validateSigninRequest,
     isAuthenticated,
-    validateResetPasswordRequest
+    validateResetPasswordRequest,
+    isAdmin,
+    isClient,
+    isAdminOrClient
 }
