@@ -77,7 +77,7 @@ const isAuthenticated = async (req, res, next) => {
         }
 
         // the token is verified
-        
+
         // check if the user is still valid or not (there might be a case where the token is verified but the user corresponding to it no longer exists)
         const user = await userService.getUserById(response.id);
         req.userId = user.id;
@@ -104,8 +104,30 @@ const isAuthenticated = async (req, res, next) => {
     }
 }
 
+const validateResetPasswordRequest = (req, res, next) => {
+    // validate the presence of old password
+    if (!req.body.oldPassword) {
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err.message = 'Old password is missing in the request';
+        return res.status(400).json(badRequestResponse);
+    }
+
+    // validate the presence of new password
+    if (!req.body.newPassword) {
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err.message = 'New password is missing in the request';
+        return res.status(400).json(badRequestResponse);
+    }
+
+    // we can proceed
+    next();
+}
+
 module.exports = {
     validateSignupRequest,
     validateSigninRequest,
-    isAuthenticated
+    isAuthenticated,
+    validateResetPasswordRequest
 }
