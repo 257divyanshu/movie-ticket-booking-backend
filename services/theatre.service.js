@@ -1,4 +1,5 @@
 const Theatre = require('../models/theatre.model');
+const {STATUS_CODES}  = require("../utils/constants");
 
 /**
  * Creates a new theatre document in the database.
@@ -23,7 +24,7 @@ const createTheatre = async (data) => {
             console.log("servie layer error: ")
             console.log(err);
             
-            throw { err: err, code: 422 };
+            throw { err: err, code: STATUS_CODES.UNPROCESSABLE_ENTITY };
         } else {
             throw error;
         }
@@ -44,7 +45,7 @@ const deleteTheatre = async (id) => {
         if (!response) {
             return {
                 err: "No theatre exists with the specified theatreId",
-                code: 404
+                code: STATUS_CODES.NOT_FOUND
             }
         }
 
@@ -72,7 +73,7 @@ const getTheatre = async (id) => {
         if (!response) {
             return {
                 err: "No theatre found for the given theatreId",
-                code: 404
+                code: STATUS_CODES.NOT_FOUND
             }
         }
 
@@ -120,7 +121,7 @@ const getTheatres = async (data) => {
         if (theatres.length == 0) {
             return {
                 err: 'Not able to find the queries theatres',
-                code: 404
+                code: STATUS_CODES.NOT_FOUND
             }
         }
 
@@ -150,7 +151,7 @@ const replaceTheatre = async (id, data) => {
         if (!theatre) {
             return {
                 err: "No theatre exists with the specified theatreId",
-                code: 404
+                code: STATUS_CODES.NOT_FOUND
             }
         };
 
@@ -166,7 +167,7 @@ const replaceTheatre = async (id, data) => {
 
             console.log(err);
 
-            throw { err: err, code: 422 };
+            throw { err: err, code: STATUS_CODES.UNPROCESSABLE_ENTITY };
         } else {
             throw error;
         }
@@ -190,7 +191,7 @@ const updateTheatre = async (id, data) => {
         if (!theatre) {
             return {
                 err: "No theatre exists with the specified theatreId",
-                code: 404
+                code: STATUS_CODES.NOT_FOUND
             }
         };
 
@@ -206,7 +207,7 @@ const updateTheatre = async (id, data) => {
 
             console.log(err);
 
-            throw { err: err, code: 422 };
+            throw { err: err, code: STATUS_CODES.UNPROCESSABLE_ENTITY };
         } else {
             throw error;
         }
@@ -235,7 +236,7 @@ const updateMoviesInTheatres = async (theatreId, movieIds, insert) => {
         if (!theatre) {
             return {
                 err: "No theatre found for the given theatreId",
-                code: 404
+                code: STATUS_CODES.NOT_FOUND
             };
         }
 
@@ -257,7 +258,7 @@ const getMoviesInATheatre = async (id) => {
         if (!theatre) {
             return {
                 err: 'No theatre with the given id found',
-                code: 404
+                code: STATUS_CODES.NOT_FOUND
             }
         }
 
@@ -280,7 +281,7 @@ const checkMovieInATheatre = async (theatreId, movieId) => {
         if(!response) {
             return {
                 err: "No such theatre found for the given id",
-                code: 404
+                code: STATUS_CODES.NOT_FOUND
             }
         }
 

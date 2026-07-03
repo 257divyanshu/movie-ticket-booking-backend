@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { errorResponseBody } = require('../utils/responsebody');
 const userService = require('../services/user.service');
-const { USER_ROLE} = require('../utils/constants');
+const { USER_ROLE, STATUS_CODES} = require('../utils/constants');
 
 const validateSignupRequest = async (req, res, next) => {
     // validate the presence of name
@@ -9,7 +9,7 @@ const validateSignupRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "Name of the user is not present in the request";
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     // validate the presence of email
@@ -17,7 +17,7 @@ const validateSignupRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "Email of the user is not present in the request";
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     // validate the presence of password
@@ -25,7 +25,7 @@ const validateSignupRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "Password of the user is not present in the request";
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     // request is valid
@@ -44,7 +44,7 @@ const validateSigninRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "No email provided for sign in";
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     // validate the presence of password
@@ -52,7 +52,7 @@ const validateSigninRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "No password provided for sign in";
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     // request is valid
@@ -68,7 +68,7 @@ const isAuthenticated = async (req, res, next) => {
             const badRequestResponse = errorResponseBody();
             badRequestResponse.message = "Malformed Request | Bad Request";
             badRequestResponse.err.message = "No token provided";
-            return res.status(403).json(badRequestResponse);
+            return res.status(STATUS_CODES.UNAUTHORISED).json(badRequestResponse);
         }
 
         const response = jwt.verify(token, process.env.AUTH_KEY);
@@ -76,7 +76,7 @@ const isAuthenticated = async (req, res, next) => {
             const badRequestResponse = errorResponseBody();
             badRequestResponse.message = "Malformed Request | Bad Request";
             badRequestResponse.err.message = "Token not verified";
-            return res.status(401).json(badRequestResponse);
+            return res.status(STATUS_CODES.UNAUTHORISED).json(badRequestResponse);
         }
 
         // the token is verified
@@ -90,10 +90,10 @@ const isAuthenticated = async (req, res, next) => {
             const badRequestResponse = errorResponseBody();
             badRequestResponse.message = "Malformed Request | Bad Request";
             badRequestResponse.err.message = error.message;
-            return res.status(401).json(badRequestResponse);
+            return res.status(STATUS_CODES.UNAUTHORISED).json(badRequestResponse);
         }
 
-        if (error.code == 404) {
+        if (error.code == STATUS_CODES.NOT_FOUND) {
             const badRequestResponse = errorResponseBody();
             badRequestResponse.message = "Malformed Request | Bad Request";
             badRequestResponse.err.message = "User doesn't exist"
@@ -103,7 +103,7 @@ const isAuthenticated = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err = error;
-        return res.status(500).json(badRequestResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(badRequestResponse);
     }
 }
 
@@ -113,7 +113,7 @@ const validateResetPasswordRequest = (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = 'Old password is missing in the request';
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     // validate the presence of new password
@@ -121,7 +121,7 @@ const validateResetPasswordRequest = (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = 'New password is missing in the request';
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     // we can proceed
@@ -136,7 +136,7 @@ const isAdmin = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "User is not an admin, cannot proceed with the request";
-        return res.status(401).json(badRequestResponse);
+        return res.status(STATUS_CODES.UNAUTHORISED).json(badRequestResponse);
     }
     next();
 }
@@ -147,7 +147,7 @@ const isClient = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "User is not a client, cannot proceed with the request";
-        return res.status(401).json(badRequestResponse);
+        return res.status(STATUS_CODES.UNAUTHORISED).json(badRequestResponse);
     }
     next();
 }
@@ -158,7 +158,7 @@ const isAdminOrClient = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "User is neither a client not an admin, cannot proceed with the request";
-        return res.status(401).json(badRequestResponse);
+        return res.status(STATUS_CODES.UNAUTHORISED).json(badRequestResponse);
     }
     next();
 }

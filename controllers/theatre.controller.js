@@ -1,4 +1,5 @@
 const theatreService = require('../services/theatre.service');
+const { STATUS_CODES } = require('../utils/constants');
 const { successResponseBody, errorResponseBody } = require('../utils/responsebody');
 
 const createTheatre = async (req, res) => {
@@ -11,7 +12,7 @@ const createTheatre = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully created the theatre";
 
-        return res.status(201).json(successResponse);
+        return res.status(STATUS_CODES.CREATED).json(successResponse);
     } catch (error) {
         console.log(error);
 
@@ -25,7 +26,7 @@ const createTheatre = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -40,7 +41,7 @@ const deleteTheatre = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully deleted the given theatre";
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
@@ -53,7 +54,7 @@ const deleteTheatre = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -68,7 +69,7 @@ const getTheatre = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully fetched the theatre data";
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
@@ -81,7 +82,7 @@ const getTheatre = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -95,7 +96,7 @@ const getTheatres = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully fetched all the theatres";
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
@@ -108,7 +109,7 @@ const getTheatres = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err = error;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -122,17 +123,17 @@ const replaceTheatre = async (req, res) => {
         const successResponse = successResponseBody();
         successResponse.data = response;
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
         if (error.err) {
             const errorResponse = errorResponseBody();
 
-            if (error.code === 404) {
+            if (error.code === STATUS_CODES.NOT_FOUND) {
                 errorResponse.err.message = error.err;
             }
-            else if (error.code === 422) {
+            else if (error.code === STATUS_CODES.UNPROCESSABLE_ENTITY) {
                 errorResponse.err = error.err;
                 errorResponse.message = "The updates that you are trying to apply doesn't validate the schema";
             }
@@ -143,7 +144,7 @@ const replaceTheatre = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -157,17 +158,17 @@ const updateTheatre = async (req, res) => {
         const successResponse = successResponseBody();
         successResponse.data = response;
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
         if (error.err) {
             const errorResponse = errorResponseBody();
 
-            if (error.code === 404) {
+            if (error.code === STATUS_CODES.NOT_FOUND) {
                 errorResponse.err.message = error.err;
             }
-            else if (error.code === 422) {
+            else if (error.code === STATUS_CODES.UNPROCESSABLE_ENTITY) {
                 errorResponse.err = error.err;
                 errorResponse.message = "The updates that you are trying to apply doesn't validate the schema";
             }
@@ -178,7 +179,7 @@ const updateTheatre = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -196,7 +197,7 @@ const updateMovies = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully updated movies in the theatre";
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
         
@@ -209,7 +210,7 @@ const updateMovies = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err = error;
         
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -223,7 +224,7 @@ const getMovies = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully fetched the movies for the theatre";
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
@@ -236,7 +237,7 @@ const getMovies = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err = error;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -251,7 +252,7 @@ const checkMovie = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully checked if movie is present in the theatre";
         
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
@@ -264,7 +265,7 @@ const checkMovie = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err = error;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 

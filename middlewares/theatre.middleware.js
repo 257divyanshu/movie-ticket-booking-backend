@@ -1,4 +1,5 @@
 const { errorResponseBody } = require('../utils/responsebody');
+const {STATUS_CODES} = require("../utils/constants");
 
 /**
  * Validates the theatre creation request payload for required fields. 
@@ -13,7 +14,7 @@ const validateTheatreCreateRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "The name of the theatre is not present in the request";
-        return res.status(400).json(badRequestResponse)
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse)
     }
 
     // validate presence of pincode
@@ -21,7 +22,7 @@ const validateTheatreCreateRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "The pincode of the theatre is not present in the request";
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     // validate the presence of city
@@ -29,7 +30,7 @@ const validateTheatreCreateRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "The city of the theatre is not present";
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     next(); // everything is fine move to the next middleware
@@ -41,7 +42,7 @@ const validateUpdateMoviesRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "The insert parameter is missing in the request";
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     // validate the presence of movieIds
@@ -49,7 +50,7 @@ const validateUpdateMoviesRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "No movies present in the request to be updated in theatre";
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     // validate the type of movieIds
@@ -57,7 +58,7 @@ const validateUpdateMoviesRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "Expected array of movies but found something else";
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
 
     // validate the length of movieIds array
@@ -65,7 +66,7 @@ const validateUpdateMoviesRequest = async (req, res, next) => {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "No movies present in the array provided";
-        return res.status(400).json(badRequestResponse);
+        return res.status(STATUS_CODES.BAD_REQUEST).json(badRequestResponse);
     }
     
     // everything is fine

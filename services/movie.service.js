@@ -1,4 +1,5 @@
 const Movie = require('../models/movie.model');
+const {STATUS_CODES}  = require("../utils/constants");
 
 /**
  * Creates a new movie document in the database.
@@ -22,7 +23,7 @@ const createMovie = async (data) => {
 
             console.log(err);
 
-            throw { err: err, code: 422 };
+            throw { err: err, code: STATUS_CODES.UNPROCESSABLE_ENTITY };
         } else {
             throw error;
         }
@@ -44,7 +45,7 @@ const deleteMovie = async (id) => {
         if (!response) {
             return {
                 err: "No movie exists with the specified movieId",
-                code: 404
+                code: STATUS_CODES.NOT_FOUND
             }
         };
 
@@ -72,7 +73,7 @@ const getMoviById = async (id) => {
     if (!movie) {
         return {
             err: "No movie found for the corresponding id provided",
-            code: 404
+            code: STATUS_CODES.NOT_FOUND
         }
     };
 
@@ -95,7 +96,7 @@ const replaceMovie = async (id, data) => {
         if (!movie) {
             return {
                 err: "No movie exists with the specified movieId",
-                code: 404
+                code: STATUS_CODES.NOT_FOUND
             }
         };
 
@@ -111,7 +112,7 @@ const replaceMovie = async (id, data) => {
 
             console.log(err);
 
-            throw { err: err, code: 422 };
+            throw { err: err, code: STATUS_CODES.UNPROCESSABLE_ENTITY };
         } else {
             throw error;
         }
@@ -134,7 +135,7 @@ const updateMovie = async (id, data) => {
         if (!movie) {
             return {
                 err: "No movie exists with the specified movieId",
-                code: 404
+                code: STATUS_CODES.NOT_FOUND
             }
         };
 
@@ -150,7 +151,7 @@ const updateMovie = async (id, data) => {
 
             console.log(err);
 
-            throw { err: err, code: 422 };
+            throw { err: err, code: STATUS_CODES.UNPROCESSABLE_ENTITY };
         } else {
             throw error;
         }
@@ -177,7 +178,7 @@ const fetchMovies = async (filter) => {
     if (movies.length == 0) {
         return {
             err: 'Not able to find the queries movies',
-            code: 404
+            code: STATUS_CODES.NOT_FOUND
         }
     }
     

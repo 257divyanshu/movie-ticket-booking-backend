@@ -1,4 +1,5 @@
 const userService = require('../services/user.service');
+const { STATUS_CODES } = require('../utils/constants');
 const { errorResponseBody, successResponseBody } = require('../utils/responsebody');
 
 const updateUser = async (req, res) => {
@@ -11,17 +12,17 @@ const updateUser = async (req, res) => {
         successResponse.data = response;
         successResponse.message = 'Successfully updated the user';
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
         if (error.err) {
             const errorResponse = errorResponseBody();
 
-            if (error.code === 404) {
+            if (error.code === STATUS_CODES.NOT_FOUND) {
                 errorResponse.err.message = error.err;
             }
-            else if (error.code === 422) {
+            else if (error.code === STATUS_CODES.UNPROCESSABLE_ENTITY) {
                 errorResponse.err = error.err;
                 errorResponse.message = "The updates that you are trying to apply doesn't validate the schema";
             }
@@ -32,7 +33,7 @@ const updateUser = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 

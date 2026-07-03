@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const userService = require('../services/user.service');
 const { successResponseBody, errorResponseBody } = require('../utils/responsebody');
+const {STATUS_CODES} = require("../utils/constants");
 
 const signup = async (req, res) => {
     try {
@@ -12,7 +13,7 @@ const signup = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully registered a user";
 
-        return res.status(201).json(successResponse);
+        return res.status(STATUS_CODES.CREATED).json(successResponse);
     } catch (error) {
         console.log("controller layer error");
         // console.log(error);
@@ -27,7 +28,7 @@ const signup = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -41,7 +42,7 @@ const signin = async (req, res) => {
         const isValidPassword = await user.isValidPassword(req.body.password);
 
         if (!isValidPassword) {
-            throw { err: 'Invalid password for the given email', code: 401 };
+            throw { err: 'Invalid password for the given email', code: STATUS_CODES.UNAUTHORISED };
         }
 
         const token = jwt.sign(
@@ -59,7 +60,7 @@ const signin = async (req, res) => {
             token: token
         };
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log("controller layer error");
         // console.log(error);
@@ -73,7 +74,7 @@ const signin = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -86,7 +87,7 @@ const resetPassword = async (req, res) => {
         const isOldPasswordCorrect = await user.isValidPassword(req.body.oldPassword);
 
         if (!isOldPasswordCorrect) {
-            throw { err: 'Invalid old password, please write the correct old password', code: 403 };
+            throw { err: 'Invalid old password, please write the correct old password', code: STATUS_CODES.BAD_REQUEST };
         }
 
         user.password = req.body.newPassword;
@@ -95,7 +96,7 @@ const resetPassword = async (req, res) => {
         const successResponse = successResponseBody();
         successResponse.data = user;
         successResponse.message = 'Successfully updated the password for the given user';
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log("controller layer error");
         // console.log(error);
@@ -108,7 +109,7 @@ const resetPassword = async (req, res) => {
 
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 

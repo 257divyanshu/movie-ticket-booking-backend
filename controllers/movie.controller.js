@@ -1,6 +1,7 @@
 const Movie = require('../models/movie.model');
 const movieService = require('../services/movie.service');
 const { successResponseBody, errorResponseBody } = require('../utils/responsebody');
+const {STATUS_CODES} = require("../utils/constants");
 
 /**
  * Controller function to create a new movie
@@ -16,7 +17,7 @@ const createMovie = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully created the movie";
 
-        return res.status(201).json(successResponse);
+        return res.status(STATUS_CODES.CREATED).json(successResponse);
     } catch (error) {
         console.log(error);
 
@@ -30,7 +31,7 @@ const createMovie = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 };
 
@@ -45,7 +46,7 @@ const deleteMovie = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully deleted the movie";
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
@@ -58,7 +59,7 @@ const deleteMovie = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -73,7 +74,7 @@ const getMovie = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully fetched the movie";
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
@@ -86,7 +87,7 @@ const getMovie = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -100,16 +101,16 @@ const replaceMovie = async (req, res) => {
         const successResponse = successResponseBody();
         successResponse.data = response;
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
         if (error.err) {
             const errorResponse = errorResponseBody();
-            if (error.code === 404) {
+            if (error.code === STATUS_CODES.NOT_FOUND) {
                 errorResponse.err.message = error.err;
             }
-            else if (error.code === 422) {
+            else if (error.code === STATUS_CODES.UNPROCESSABLE_ENTITY) {
                 errorResponse.err = error.err;
                 errorResponse.message = "The updates that you are trying to apply doesn't validate the schema";
             }
@@ -119,7 +120,7 @@ const replaceMovie = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -133,16 +134,16 @@ const updateMovie = async (req, res) => {
         const successResponse = successResponseBody();
         successResponse.data = response;
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
         if (error.err) {
             const errorResponse = errorResponseBody();
-            if (error.code === 404) {
+            if (error.code === STATUS_CODES.NOT_FOUND) {
                 errorResponse.err.message = error.err;
             }
-            else if (error.code === 422) {
+            else if (error.code === STATUS_CODES.UNPROCESSABLE_ENTITY) {
                 errorResponse.err = error.err;
                 errorResponse.message = "The updates that you are trying to apply doesn't validate the schema";
             }
@@ -152,7 +153,7 @@ const updateMovie = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
@@ -166,7 +167,7 @@ const getMovies = async (req, res) => {
         successResponse.data = response;
         successResponse.message = "Successfully fetched the movies";
 
-        return res.status(200).json(successResponse);
+        return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log(error);
 
@@ -179,7 +180,7 @@ const getMovies = async (req, res) => {
         const errorResponse = errorResponseBody();
         errorResponse.err.message = error.message;
 
-        return res.status(500).json(errorResponse);
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
     }
 }
 
