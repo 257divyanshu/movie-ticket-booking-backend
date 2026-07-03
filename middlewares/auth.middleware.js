@@ -142,7 +142,9 @@ const isAdmin = async (req, res, next) => {
 }
 
 const isClient = async (req, res, next) => {
-    const user = await userService.getUserById(req.user);
+    console.log("isClient middleware")
+
+    const user = await userService.getUserById(req.userId);
     if (user.userRole != USER_ROLE.client) {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
@@ -153,11 +155,13 @@ const isClient = async (req, res, next) => {
 }
 
 const isAdminOrClient = async (req, res, next) => {
-    const user = await userService.getUserById(req.user);
+    console.log("isAdminOrClient middleware")
+
+    const user = await userService.getUserById(req.userId);
     if (user.userRole != USER_ROLE.admin && user.userRole != USER_ROLE.client) {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
-        badRequestResponse.err.message = "User is neither a client not an admin, cannot proceed with the request";
+        badRequestResponse.err.message = "User is neither a client nor an admin, cannot proceed with the request";
         return res.status(STATUS_CODES.UNAUTHORISED).json(badRequestResponse);
     }
     next();
