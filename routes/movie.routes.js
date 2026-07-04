@@ -1,5 +1,6 @@
 const movieController = require('../controllers/movie.controller');
 const movieMiddlewares = require('../middlewares/movie.middleware');
+const authMiddlewares = require('../middlewares/auth.middleware');
 
 const routes = (app) => {
     // routes function takes express app object as parameter
