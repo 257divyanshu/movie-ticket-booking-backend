@@ -86,6 +86,13 @@ const isAuthenticated = async (req, res, next) => {
         req.userId = user._id;
         next();
     } catch (error) {
+        if (error.name == "TokenExpiredError") {
+            const badRequestResponse = errorResponseBody();
+            badRequestResponse.message = "Malformed Request | Bad Request";
+            badRequestResponse.err.message = error.message;
+            return res.status(STATUS_CODES.UNAUTHORISED).json(badRequestResponse);
+        }
+
         if (error.name == "JsonWebTokenError") {
             const badRequestResponse = errorResponseBody();
             badRequestResponse.message = "Malformed Request | Bad Request";
