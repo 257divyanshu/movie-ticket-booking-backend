@@ -43,7 +43,7 @@ const deleteMovie = async (id) => {
         console.log(response);
 
         if (!response) {
-            return {
+            throw {
                 err: "No movie exists with the specified movieId",
                 code: STATUS_CODES.NOT_FOUND
             }
@@ -71,7 +71,7 @@ const getMoviById = async (id) => {
     console.log(movie);
 
     if (!movie) {
-        return {
+        throw {
             err: "No movie found for the corresponding id provided",
             code: STATUS_CODES.NOT_FOUND
         }
@@ -94,7 +94,7 @@ const replaceMovie = async (id, data) => {
         console.log(movie);
 
         if (!movie) {
-            return {
+            throw {
                 err: "No movie exists with the specified movieId",
                 code: STATUS_CODES.NOT_FOUND
             }
@@ -133,7 +133,7 @@ const updateMovie = async (id, data) => {
         console.log(movie);
 
         if (!movie) {
-            return {
+            throw {
                 err: "No movie exists with the specified movieId",
                 code: STATUS_CODES.NOT_FOUND
             }
@@ -176,7 +176,7 @@ const fetchMovies = async (filter) => {
     console.log(movies);
 
     if (movies.length == 0) {
-        return {
+        throw {
             err: 'Not able to find the queries movies',
             code: STATUS_CODES.NOT_FOUND
         }
