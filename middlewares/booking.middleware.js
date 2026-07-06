@@ -1,8 +1,9 @@
-const { STATUS_CODES } = require('../utils/constants');
+const { STATUS_CODES, USER_ROLE, BOOKING_STATUS } = require('../utils/constants');
 const { errorResponseBody } = require('../utils/responsebody');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const theatreService = require('../services/theatre.service');
+const userService = require('../services/user.service');
 
 const validateBookingCreateRequest = async (req, res, next) => {
     console.log("validateBookingCreateRequest middleware function");
@@ -74,7 +75,7 @@ const validateBookingCreateRequest = async (req, res, next) => {
     }
     catch (error) {
         console.log("middleware layer error");
-        console.log(error);
+        // console.log(error);
 
         if (error.err) {
             const errorResponse = errorResponseBody();
@@ -91,6 +92,38 @@ const validateBookingCreateRequest = async (req, res, next) => {
 
 }
 
+const canChangeStatus = async (req, res, next) => {
+    console.log("canChangeStatus middleware function");
+
+    try {
+        const user = await userService.getUserById(req.userId);
+
+        // Customers are only allowed to set the booking status to CANCELLED.
+        if (user.userRole === USER_ROLE.customer && req.body.status && req.body.status !== BOOKING_STATUS.cancelled) {
+            throw {err: "You are not allowed to change the booking status", code: STATUS_CODES.FORBIDDEN};
+        }
+
+        next();
+    }
+    catch (error) {
+        console.log("middleware layer error");
+        // console.log(error);
+
+        if (error.err) {
+            const errorResponse = errorResponseBody();
+            errorResponse.err.message = error.err;
+            return res.status(error.code).json(errorResponse);
+        }
+
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err = error;
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(badRequestResponse);
+
+    }
+}
+
 module.exports = {
-    validateBookingCreateRequest
+    validateBookingCreateRequest,
+    canChangeStatus
 }
