@@ -173,12 +173,21 @@ const isAdminOrClient = async (req, res, next) => {
     console.log("isAdminOrClient middleware")
 
     const user = await userService.getUserById(req.userId);
+
     if (user.userRole != USER_ROLE.admin && user.userRole != USER_ROLE.client) {
         const badRequestResponse = errorResponseBody();
         badRequestResponse.message = "Malformed Request | Bad Request";
         badRequestResponse.err.message = "User is neither a client nor an admin, cannot proceed with the request";
-        return res.status(STATUS_CODES.UNAUTHORISED).json(badRequestResponse);
+        return res.status(STATUS_CODES.FORBIDDEN).json(badRequestResponse);
     }
+
+    if (user.userStatus !== USER_STATUS.approved) {
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err.message = "User is not an approved client/admin, cannot proceed with the request";
+        return res.status(STATUS_CODES.FORBIDDEN).json(badRequestResponse);
+    }
+
     next();
 }
 
