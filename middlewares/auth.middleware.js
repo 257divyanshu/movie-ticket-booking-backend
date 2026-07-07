@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { errorResponseBody } = require('../utils/responsebody');
 const userService = require('../services/user.service');
-const { USER_ROLE, STATUS_CODES} = require('../utils/constants');
+const { USER_ROLE, STATUS_CODES, USER_STATUS } = require('../utils/constants');
 
 const validateSignupRequest = async (req, res, next) => {
     // validate the presence of name
@@ -145,6 +145,14 @@ const isAdmin = async (req, res, next) => {
         badRequestResponse.err.message = "User is not an admin, cannot proceed with the request";
         return res.status(STATUS_CODES.UNAUTHORISED).json(badRequestResponse);
     }
+
+    if (user.userStatus !== USER_STATUS.approved) {
+        const badRequestResponse = errorResponseBody();
+        badRequestResponse.message = "Malformed Request | Bad Request";
+        badRequestResponse.err.message = "User is not an approved admin, cannot proceed with the request";
+        return res.status(STATUS_CODES.FORBIDDEN).json(badRequestResponse);
+    }
+
     next();
 }
 
