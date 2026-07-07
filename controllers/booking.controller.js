@@ -67,8 +67,89 @@ const updateBooking = async (req, res) => {
     }
 }
 
+const getBookings = async (req, res) => {
+    try {
+        console.log("getBookings controller function");
+
+        const response = await bookingService.getBookings({ userId: req.userId });
+
+        const successResponse = successResponseBody();
+        successResponse.data = response;
+        successResponse.message = "Successfully fetched the bookings";
+
+        return res.status(STATUS_CODES.OK).json(successResponse);
+    } catch (error) {
+        console.log("controller layer error");
+        // console.log(error);
+
+        if(error.err){
+            const errorResponse = errorResponseBody();
+            errorResponse.err.message = error.err;   
+            return res.status(error.code).json(errorResponse);
+        }
+        
+        const errorResponse = errorResponseBody();
+        errorResponse.err = error;
+
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
+    }
+}
+
+const getAllBookings = async (req, res) => {
+    try {
+        console.log("getAllBookings controller function");
+
+        const response = await bookingService.getAllBookings();
+
+        const successResponse = successResponseBody();
+        successResponse.data = response;
+        successResponse.message = "Successfully fetched all the bookings";
+
+        return res.status(STATUS_CODES.OK).json(successResponse);
+    } catch (error) {
+        console.log("controller layer error");
+        // console.log(error);
+
+        const errorResponse = errorResponseBody();
+        errorResponse.err = error;
+
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
+    }
+}
+
+const getBookingById = async (req, res) => {
+    try {
+        console.log("getBookingById controller function");
+
+        const response = await bookingService.getBookingById(req.params.bookingId, req.userId);
+
+        const successResponse = successResponseBody();
+        successResponse.data = response;
+        successResponse.message = "Successfully fetched the booking";
+
+        return res.status(STATUS_CODES.OK).json(successResponse);
+    } catch (error) {
+        console.log("controller layer error");
+        // console.log(error);
+
+        if (error.err) {
+            const errorResponse = errorResponseBody();
+            errorResponse.err.message = error.err;
+            return res.status(error.code).json(errorResponse);
+        }
+        
+        const errorResponse = errorResponseBody();
+        errorResponse.err = error;
+
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
+    }
+}
+
 
 module.exports = {
     createBooking,
-    updateBooking
+    updateBooking,
+    getBookings,
+    getAllBookings,
+    getBookingById
 }

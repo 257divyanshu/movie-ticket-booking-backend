@@ -53,7 +53,74 @@ const updateBooking = async (data, bookingId) => {
     }
 }
 
+const getBookings = async (data) => {
+    console.log("getBookings service function");
+
+    try {
+        const response = await Booking.find(data);
+
+        if (response.length === 0) {
+            throw {
+                err: "No booking found for the given userId",
+                code: STATUS_CODES.NOT_FOUND
+            }
+        }
+
+        return response;
+    } catch (error) {
+        console.log("service layer error");
+        // console.log(error);
+
+        throw error;
+    }
+}
+
+const getAllBookings = async () => {
+    console.log("getAllBookings service function");
+
+    try {
+        const response = await Booking.find();
+        return response;
+    } catch (error) {
+        console.log("service layer error");
+        // console.log(error);
+
+        throw error;
+    }
+}
+
+const getBookingById = async (bookingId, userId) => {
+    console.log("getBookingById service function");
+
+    try {
+        const response = await Booking.findById(bookingId);
+
+        if (!response) {
+            throw {
+                err: 'No booking records found for the given bookingId',
+                code: STATUS_CODES.NOT_FOUND
+            }
+        }
+
+        if (response.userId.toString() !== userId.toString()) {
+            throw {
+                err: "You are not authorized to access another user's booking",
+                code: STATUS_CODES.FORBIDDEN
+            }
+        }
+        return response;
+    } catch (error) {
+        console.log("service layer error");
+        // console.log(error);
+
+        throw error;
+    }
+}
+
 module.exports = {
     createBooking,
-    updateBooking
+    updateBooking,
+    getBookings,
+    getAllBookings,
+    getBookingById
 }
