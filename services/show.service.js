@@ -94,7 +94,37 @@ const getShows = async (data) => {
     }
 }
 
+const deleteShow = async (id) => {
+    try {
+        console.log("deleteShow service function");
+
+        if (!ObjectId.isValid(id)) {
+            throw {
+                err: "Invalid showId",
+                code: STATUS_CODES.BAD_REQUEST
+            };
+        }
+        
+        const response = await Show.findByIdAndDelete(id);
+
+        if (!response) {
+            throw {
+                err: 'No show found for the given showId',
+                code: STATUS_CODES.NOT_FOUND
+            }
+        }
+
+        return response;
+    } catch (error) {
+        console.log("service layer error");
+        // console.log(error);
+
+        throw error;
+    }
+}
+
 module.exports = {
     createShow,
-    getShows
+    getShows,
+    deleteShow
 }

@@ -67,7 +67,36 @@ const getShows = async (req, res) => {
     }
 }
 
+const deleteShow = async (req, res) => {
+    try {
+        console.log("deleteShow controller function");
+
+        const response = await showService.deleteShow(req.params.showId);
+
+        const successResponse = successResponseBody();
+        successResponse.data = response;
+        successResponse.message = "Successfully deleted the show";
+
+        return res.status(STATUS_CODES.OK).json(successResponse);
+    } catch (error) {
+        console.log("controller layer error");
+        console.log(error);
+
+        if(error.err) {
+            const errorResponse = errorResponseBody();
+            errorResponse.err.message = error.err;
+            return res.status(error.code).json(errorResponse);
+        }
+        
+        const errorResponse = errorResponseBody();
+        errorResponse.err = error;
+
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
+    }
+}
+
 module.exports = {
     createShow,
-    getShows
+    getShows,
+    deleteShow
 }

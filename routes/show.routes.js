@@ -15,6 +15,13 @@ const routes = (app) => {
         '/mba/api/v1/shows',
         showController.getShows
     );
+
+    app.delete(
+        '/mba/api/v1/shows/:showId',
+        authMiddlewares.isAuthenticated,
+        authMiddlewares.isAdminOrClient,
+        showController.deleteShow
+    );
 }
 
 module.exports = routes;
