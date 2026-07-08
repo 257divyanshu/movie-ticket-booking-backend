@@ -17,14 +17,14 @@ const createShow = async (req, res) => {
         console.log("controller layer error");
         console.log(error);
 
-        if(error.err) {
+        if (error.err) {
             const errorResponse = errorResponseBody();
 
-            if(error.code === STATUS_CODES.NOT_FOUND){
+            if (error.code === STATUS_CODES.NOT_FOUND) {
                 errorResponse.err.message = error.err;
             }
 
-            if(error.code === STATUS_CODES.UNPROCESSABLE_ENTITY){
+            if (error.code === STATUS_CODES.UNPROCESSABLE_ENTITY) {
                 errorResponse.err = error.err;
                 errorResponse.message = "Validation failed for the supplied show details";
             }
@@ -39,6 +39,35 @@ const createShow = async (req, res) => {
     }
 }
 
+const getShows = async (req, res) => {
+    try {
+        console.log("getShows controller function");
+
+        const response = await showService.getShows(req.query);
+
+        const successResponse = successResponseBody();
+        successResponse.message = "Successfully fetched the movie shows";
+        successResponse.data = response;
+
+        return res.status(STATUS_CODES.OK).json(successResponse);
+    } catch (error) {
+        console.log("controller layer error");
+        console.log(error);
+
+        if (error.err) {
+            const errorResponse = errorResponseBody();
+            errorResponse.err.message = error.err;
+            return res.status(error.code).json(errorResponse);
+        }
+
+        const errorResponse = errorResponseBody();
+        errorResponse.err = error;
+
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
+    }
+}
+
 module.exports = {
-    createShow
+    createShow,
+    getShows
 }

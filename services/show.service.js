@@ -1,6 +1,7 @@
 const Show = require('../models/show.model');
 const Theatre = require('../models/theatre.model');
 const { STATUS_CODES } = require('../utils/constants');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 /**
  * 
@@ -9,7 +10,7 @@ const { STATUS_CODES } = require('../utils/constants');
  */
 const createShow = async (data) => {
     try {
-        console.log("createShow service function")
+        console.log("createShow service function");
 
         const theatre = await Theatre.findById(data.theatreId);
 
@@ -48,6 +49,52 @@ const createShow = async (data) => {
     }
 }
 
+const getShows = async (data) => {
+    try {
+        console.log("getShows service function");
+
+        let filter = {};
+
+        if (data.theatreId) {
+            if (!ObjectId.isValid(data.theatreId)) {
+                throw {
+                    err: "Invalid theatreId",
+                    code: STATUS_CODES.BAD_REQUEST
+                };
+            }
+
+            filter.theatreId = data.theatreId;
+        }
+        if (data.movieId) {
+            if (!ObjectId.isValid(data.movieId)) {
+                throw {
+                    err: "Invalid movieId",
+                    code: STATUS_CODES.BAD_REQUEST
+                };
+            }
+
+            filter.movieId = data.movieId;
+        }
+
+        const response = await Show.find(filter);
+
+        if (response.length === 0) {
+            throw {
+                err: "No shows found for the specified criteria",
+                code: STATUS_CODES.NOT_FOUND
+            }
+        }
+
+        return response;
+    } catch (error) {
+        console.log("service layer error");
+        // console.log(error);
+
+        throw error;
+    }
+}
+
 module.exports = {
-    createShow
+    createShow,
+    getShows
 }
