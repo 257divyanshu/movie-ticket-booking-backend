@@ -94,18 +94,18 @@ const getShows = async (data) => {
     }
 }
 
-const deleteShow = async (id) => {
+const deleteShow = async (showId) => {
     try {
         console.log("deleteShow service function");
 
-        if (!ObjectId.isValid(id)) {
+        if (!ObjectId.isValid(showId)) {
             throw {
                 err: "Invalid showId",
                 code: STATUS_CODES.BAD_REQUEST
             };
         }
-        
-        const response = await Show.findByIdAndDelete(id);
+
+        const response = await Show.findByIdAndDelete(showId);
 
         if (!response) {
             throw {
@@ -123,8 +123,53 @@ const deleteShow = async (id) => {
     }
 }
 
+const updateShow = async (showId, data) => {
+    try {
+        console.log("updateShow service function");
+
+        if (!ObjectId.isValid(showId)) {
+            throw {
+                err: "Invalid showId",
+                code: STATUS_CODES.BAD_REQUEST
+            };
+        }
+
+        const response = await Show.findByIdAndUpdate(showId, data, {
+            returnDocument: 'after',
+            runValidators: true
+        });
+
+        if (!response) {
+            throw {
+                err: 'No show found for the given showId',
+                code: STATUS_CODES.NOT_FOUND
+            }
+        }
+
+        return response;
+    } catch (error) {
+        console.log("service layer error");
+        // console.log(error);
+
+        if (error.name == 'ValidationError') {
+            let err = {};
+            Object.keys(error.errors).forEach(key => {
+                err[key] = error.errors[key].message;
+            });
+
+            throw {
+                err,
+                code: STATUS_CODES.UNPROCESSABLE_ENTITY
+            }
+        }
+
+        throw error;
+    }
+}
+
 module.exports = {
     createShow,
     getShows,
-    deleteShow
+    deleteShow,
+    updateShow
 }

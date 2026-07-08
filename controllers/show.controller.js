@@ -82,12 +82,12 @@ const deleteShow = async (req, res) => {
         console.log("controller layer error");
         console.log(error);
 
-        if(error.err) {
+        if (error.err) {
             const errorResponse = errorResponseBody();
             errorResponse.err.message = error.err;
             return res.status(error.code).json(errorResponse);
         }
-        
+
         const errorResponse = errorResponseBody();
         errorResponse.err = error;
 
@@ -95,8 +95,47 @@ const deleteShow = async (req, res) => {
     }
 }
 
+const updateShow = async (req, res) => {
+    try {
+        console.log("updateShow controller function");
+
+        const response = await showService.updateShow(req.params.showId, req.body);
+
+        const successResponse = successResponseBody();
+        successResponse.data = response;
+        successResponse.message = "Successfully updated the show";
+
+        return res.status(STATUS_CODES.OK).json(successResponse);
+    } catch (error) {
+        console.log("controller layer error");
+        console.log(error);
+
+        if (error.err) {
+            const errorResponse = errorResponseBody();
+
+            if(error.code === STATUS_CODES.NOT_FOUND || error.code === STATUS_CODES.BAD_REQUEST){
+                errorResponse.err.message = error.err;
+            }
+
+            if(error.code === STATUS_CODES.UNPROCESSABLE_ENTITY){
+                errorResponse.err = error.err;
+                errorResponse.message = "Validation failed for the supplied show details";
+
+            }
+
+            return res.status(error.code).json(errorResponse);
+        }
+        
+        const errorResponse = errorResponseBody();
+        errorResponse.err = error;
+        
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
+    }
+}
+
 module.exports = {
     createShow,
     getShows,
-    deleteShow
+    deleteShow,
+    updateShow
 }
