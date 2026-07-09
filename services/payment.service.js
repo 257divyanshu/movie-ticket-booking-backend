@@ -15,6 +15,13 @@ const createPayment = async (data) => {
             }
         }
 
+        if (booking.status === BOOKING_STATUS.successfull) {
+            throw {
+                err: 'Payment has already been completed for this booking',
+                code: STATUS_CODE.FORBIDDEN
+            }
+        }
+
         if (booking.userId.toString() !== data.userId.toString()) {
             throw {
                 err: "You can only make a payment for your booking",
