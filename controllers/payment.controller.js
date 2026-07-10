@@ -8,14 +8,14 @@ const createPayment = async (req, res) => {
 
         const response = await paymentService.createPayment({ ...req.body, userId: req.userId });
 
-        if (response.status === BOOKING_STATUS.expired) {
+        if (response.status === BOOKING_STATUS_CODES.expired) {
             const errorResponse = errorResponseBody();
             errorResponse.err.message = "The payment took more than 5 minutes to get processed, hence you booking got expired, please try again";
 
             return res.status(STATUS_CODES.GONE).json(errorResponse);
         }
 
-        if (response.status === BOOKING_STATUS.cancelled) {
+        if (response.status === BOOKING_STATUS_CODES.cancelled) {
             const errorResponse = errorResponseBody();
             errorResponse.err.message = "The payment failed due to some reason. Booking was not successfull. Please try again";
 
@@ -72,7 +72,35 @@ const getPaymentDetailsById = async (req, res) => {
     }
 }
 
+const getAllPayments = async (req, res) => {
+    try {
+        console.log('getAllPayments controller function');
+
+        const response = await paymentService.getAllPayments(req.userId);
+
+        const successResponse = successResponseBody();
+        successResponse.data = response;
+        successResponse.message = "Successfully fetched all the payments";
+
+        return res.status(STATUS_CODES.OK).json(successResponse);
+    } catch (error) {
+        console.log("controller layer error");
+        console.log(error);
+
+        if (error.err) {
+            const errorResponse = errorResponseBody();
+            errorResponse.err.message = error.err;
+            return res.status(error.code).json(errorResponse);
+        }
+
+        const errorResponse = errorResponseBody();
+        errorResponse.err = error;
+        return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json(errorResponse);
+    }
+}
+
 module.exports = {
     createPayment,
-    getPaymentDetailsById
+    getPaymentDetailsById,
+    getAllPayments
 }

@@ -1,6 +1,7 @@
 const Payment = require('../models/payment.model');
 const Booking = require('../models/booking.model');
-const { STATUS_CODES, BOOKING_STATUS, PAYMENT_STATUS } = require('../utils/constants');
+const User = require('../models/user.model');
+const { STATUS_CODES, BOOKING_STATUS, PAYMENT_STATUS, USER_ROLE } = require('../utils/constants');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const createPayment = async (data) => {
@@ -107,7 +108,40 @@ const getPaymentById = async (paymentId, userId) => {
     }
 }
 
+const getAllPayments = async (userId) => {
+    try {
+        console.log('getAllPayments service function');
+
+        const user = await User.findById(userId);
+
+        if (!user) {
+            throw {
+                err: "No user found",
+                code: STATUS_CODES.NOT_FOUND
+            };
+        }
+
+        let filter = {};
+
+        if (user.userRole !== USER_ROLE.admin) {
+            filter.userId = user._id;
+        }
+
+        const bookings = await Booking.find(filter).select('_id');
+
+        const payments = await Payment.find({ booking: { $in: bookings } }).populate('booking');
+
+        return payments;
+    } catch (error) {
+        console.log("service layer error");
+        // console.log(error);
+
+        throw error;
+    }
+}
+
 module.exports = {
     createPayment,
-    getPaymentById
+    getPaymentById,
+    getAllPayments
 }
