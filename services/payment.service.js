@@ -1,6 +1,7 @@
 const Payment = require('../models/payment.model');
 const Booking = require('../models/booking.model');
 const { STATUS_CODES, BOOKING_STATUS, PAYMENT_STATUS } = require('../utils/constants');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const createPayment = async (data) => {
     console.log('createPayment service function');
@@ -18,7 +19,7 @@ const createPayment = async (data) => {
         if (booking.status === BOOKING_STATUS.successfull) {
             throw {
                 err: 'Payment has already been completed for this booking',
-                code: STATUS_CODE.FORBIDDEN
+                code: STATUS_CODES.FORBIDDEN
             }
         }
 
@@ -46,7 +47,7 @@ const createPayment = async (data) => {
         }
 
         const payment = await Payment.create({
-            bookingId: data.bookingId,
+            booking: data.bookingId,
             amount: data.amount
         });
 
@@ -64,12 +65,49 @@ const createPayment = async (data) => {
         return booking;
     } catch (error) {
         console.log("service layer error");
-        console.log(error);
+        // console.log(error);
+
+        throw error;
+    }
+}
+
+const getPaymentById = async (paymentId, userId) => {
+    try {
+        console.log('getPaymentById service function');
+
+        if (!ObjectId.isValid(paymentId)) {
+            throw {
+                err: "Invalid paymentId",
+                code: STATUS_CODES.BAD_REQUEST
+            };
+        }
+
+        const response = await Payment.findById(paymentId).populate('booking');
+
+        if (!response) {
+            throw {
+                err: 'No payment record found',
+                code: STATUS_CODES.NOT_FOUND
+            }
+        }
+
+        if (response.booking.userId.toString() !== userId.toString()) {
+            throw {
+                err: "You are not authorized to access this payment",
+                code: STATUS_CODES.FORBIDDEN
+            };
+        }
+
+        return response;
+    } catch (error) {
+        console.log("service layer error");
+        // console.log(error);
 
         throw error;
     }
 }
 
 module.exports = {
-    createPayment
+    createPayment,
+    getPaymentById
 }
