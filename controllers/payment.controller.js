@@ -8,14 +8,14 @@ const createPayment = async (req, res) => {
 
         const response = await paymentService.createPayment({ ...req.body, userId: req.userId });
 
-        if (response.status === BOOKING_STATUS_CODES.expired) {
+        if (response.status === BOOKING_STATUS.expired) {
             const errorResponse = errorResponseBody();
             errorResponse.err.message = "The payment took more than 5 minutes to get processed, hence you booking got expired, please try again";
 
             return res.status(STATUS_CODES.GONE).json(errorResponse);
         }
 
-        if (response.status === BOOKING_STATUS_CODES.cancelled) {
+        if (response.status === BOOKING_STATUS.cancelled) {
             const errorResponse = errorResponseBody();
             errorResponse.err.message = "The payment failed due to some reason. Booking was not successfull. Please try again";
 
