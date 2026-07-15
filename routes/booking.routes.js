@@ -13,7 +13,7 @@ const routes = (app) => {
     app.patch(
         '/mba/api/v1/bookings/:bookingId',
         authMiddleware.isAuthenticated,
-        bookingMiddleware.canChangeStatus,
+        bookingMiddleware.validateBookingUpdateRequest,
         bookingController.updateBooking
     );
 

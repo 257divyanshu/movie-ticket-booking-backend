@@ -6,9 +6,7 @@ const createBooking = async (req, res) => {
     try {
         console.log("createBooking controller layer function");
 
-        let userId = req.userId;
-
-        const response = await bookingService.createBooking({ ...req.body, userId: userId });
+        const response = await bookingService.createBooking({ ...req.body, user: req.userId, show: req.show });
 
         const successResponse = successResponseBody();
         successResponse.data = response;
@@ -17,7 +15,7 @@ const createBooking = async (req, res) => {
         return res.status(STATUS_CODES.CREATED).json(successResponse);
     } catch (error) {
         console.log("controller layer error");
-        // console.log(error);
+        console.log(error);
 
         if (error.err) {
             const errorResponse = errorResponseBody();
@@ -46,7 +44,7 @@ const updateBooking = async (req, res) => {
         return res.status(STATUS_CODES.OK).json(successResponse);
     } catch (error) {
         console.log("controller layer error");
-        // console.log(error);
+        console.log(error);
 
         if (error.err) {
             const errorResponse = errorResponseBody();
@@ -71,7 +69,7 @@ const getBookings = async (req, res) => {
     try {
         console.log("getBookings controller function");
 
-        const response = await bookingService.getBookings({ userId: req.userId });
+        const response = await bookingService.getBookings({ user: req.userId });
 
         const successResponse = successResponseBody();
         successResponse.data = response;
@@ -82,12 +80,12 @@ const getBookings = async (req, res) => {
         console.log("controller layer error");
         // console.log(error);
 
-        if(error.err){
+        if (error.err) {
             const errorResponse = errorResponseBody();
-            errorResponse.err.message = error.err;   
+            errorResponse.err.message = error.err;
             return res.status(error.code).json(errorResponse);
         }
-        
+
         const errorResponse = errorResponseBody();
         errorResponse.err = error;
 
@@ -121,23 +119,37 @@ const getBookingById = async (req, res) => {
     try {
         console.log("getBookingById controller function");
 
-        const response = await bookingService.getBookingById(req.params.bookingId, req.userId);
+        const response = await bookingService.getBookingById(req.params.bookingId);
+
+        const user = await userService.getUserById(req.userId);
+
+        // Customers can only access their own bookings.
+        if (
+            user.userRole === USER_ROLE.customer &&
+            response.user._id.toString() !== req.userId.toString()
+        ) {
+            throw {
+                err: "You are not authorized to access another user's booking",
+                code: STATUS_CODES.FORBIDDEN
+            };
+        }
 
         const successResponse = successResponseBody();
         successResponse.data = response;
         successResponse.message = "Successfully fetched the booking";
 
         return res.status(STATUS_CODES.OK).json(successResponse);
+
     } catch (error) {
         console.log("controller layer error");
-        // console.log(error);
+        console.log(error);
 
         if (error.err) {
             const errorResponse = errorResponseBody();
             errorResponse.err.message = error.err;
             return res.status(error.code).json(errorResponse);
         }
-        
+
         const errorResponse = errorResponseBody();
         errorResponse.err = error;
 

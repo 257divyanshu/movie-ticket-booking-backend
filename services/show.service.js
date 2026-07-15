@@ -167,9 +167,39 @@ const updateShow = async (showId, data) => {
     }
 }
 
+const getShowById = async (showId) => {
+    try {
+        console.log("getShowById service function");
+
+        if (!ObjectId.isValid(showId)) {
+            throw {
+                err: "Invalid showId",
+                code: STATUS_CODES.BAD_REQUEST
+            };
+        }
+
+        const response = await Show.findById(showId);
+
+        if (!response) {
+            throw {
+                err: "No show found for the given showId",
+                code: STATUS_CODES.NOT_FOUND
+            };
+        }
+
+        return response;
+    } catch (error) {
+        console.log("service layer error");
+        // console.log(error);
+
+        throw error;
+    }
+}
+
 module.exports = {
     createShow,
     getShows,
     deleteShow,
-    updateShow
+    updateShow,
+    getShowById
 }

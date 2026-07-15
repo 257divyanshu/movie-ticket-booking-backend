@@ -3,24 +3,15 @@ const mongoose = require('mongoose');
 const { BOOKING_STATUS } = require('../utils/constants');
 
 const bookingSchema = new mongoose.Schema({
-    theatreId: {
+    show: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'Theatre'
+        ref: 'Show'
     },
-    movieId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'Movie'
-    },
-    userId: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
-    },
-    timing: {
-        type: String,
-        required: true
     },
     noOfSeats: {
         type: Number,
